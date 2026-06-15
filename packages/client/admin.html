@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Euclides Test — Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body class="page-admin">
+    <div class="bg-mesh" aria-hidden="true"></div>
+    <div class="bg-grid" aria-hidden="true"></div>
+    <canvas id="math-particles-canvas" style="position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1; opacity: 0.95;"></canvas>
+
+    <div id="app" class="app-admin">
+      <!-- SIDEBAR -->
+      <aside class="admin-sidebar glass">
+        <div class="sidebar-logo">
+          <span class="logo-icon">📊</span>
+          <div class="logo-text">
+            <h2>Euclides<span class="brand-accent">Test</span></h2>
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <button type="button" class="sidebar-tab active" data-tab="tab-painel">
+            <span class="tab-icon">🖥️</span> PAINEL
+          </button>
+          <button type="button" class="sidebar-tab" data-tab="tab-usuarios">
+            <span class="tab-icon">👥</span> USUÁRIOS
+          </button>
+          <button type="button" class="sidebar-tab" data-tab="tab-configuracoes">
+            <span class="tab-icon">⚙️</span> CONFIGURAÇÕES
+          </button>
+        </nav>
+        <div class="sidebar-footer" style="display: flex; flex-direction: column; gap: 8px;">
+          <a href="/" class="btn ghost btn-sm w-full" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; height: 36px; box-sizing: border-box;">← Voltar para Arena</a>
+          <button type="button" id="btn-admin-logout-sidebar" class="btn ghost btn-sm w-full">Sair</button>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <div class="admin-main-content">
+        <!-- HEADER -->
+        <header class="admin-header glass">
+          <div class="header-left">
+            <span class="pill pill-admin">Acesso restrito</span>
+            <h1>CONTROLE DE EVENTOS & RANKINGS</h1>
+          </div>
+          <div class="header-right">
+            <div class="admin-profile">
+              <span class="profile-avatar">👨‍🏫</span>
+              <span class="profile-name">Professor Admin</span>
+            </div>
+          </div>
+        </header>
+
+        <!-- CONTENT PANEL -->
+        <div class="admin-content-inner">
+          <!-- LOGIN FORM (Centers automatically if login form is not hidden) -->
+          <div class="panel glass-card admin-card login-card-center" id="admin-panel">
+            <form id="admin-login-form" class="admin-login form-stack">
+              <div class="panel-head" style="text-align: center; margin-bottom: 24px;">
+                <span class="pill pill-admin" style="margin: 0 auto 12px;">Acesso restrito</span>
+                <h2>Controle do Evento</h2>
+                <p class="muted">Entre com suas credenciais de administrador</p>
+              </div>
+              <label class="field">
+                <span>Administrador</span>
+                <div class="select-wrap">
+                  <select name="adminName" id="login-admin-name" required>
+                    <option value="" disabled selected>Selecione seu nome</option>
+                    <option value="Plinyl">Plinyl</option>
+                    <option value="Alisson">Alisson</option>
+                    <option value="Rikelmy">Rikelmy</option>
+                    <option value="Lucas">Lucas</option>
+                    <option value="Marcelo">Marcelo</option>
+                  </select>
+                  <span class="select-chevron" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+                      <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                </div>
+              </label>
+              <label class="field">
+                <span>Senha</span>
+                <input name="token" type="password" required autocomplete="off" placeholder="••••••••" />
+              </label>
+              <button type="submit" class="btn primary btn-glow">Entrar</button>
+              <a href="/" class="btn ghost btn-sm w-full" style="text-align: center; margin-top: 12px; text-decoration: none; display: flex; align-items: center; justify-content: center; height: 36px; box-sizing: border-box;">← Voltar para Arena</a>
+            </form>
+
+            <p id="admin-loading" class="admin-msg muted hidden">Carregando...</p>
+            <p id="admin-msg" class="admin-msg muted"></p>
+
+            <!-- DASHBOARD -->
+            <div id="admin-dashboard" class="hidden">
+              
+              <!-- TAB 1: PAINEL -->
+              <div id="tab-painel" class="tab-panel-content">
+                <div class="admin-grid-top">
+                  <!-- CARD 1: STATUS DA APRESENTAÇÃO -->
+                  <div class="admin-block panel-card">
+                    <h3 class="panel-card-title">STATUS DA APRESENTAÇÃO</h3>
+                    <div id="admin-rodada-status" class="rodada-status-box">
+                      <!-- Renderizado via JS -->
+                    </div>
+                    <div class="admin-actions-vertical">
+                      <button type="button" id="btn-rodada-iniciar" class="btn primary btn-sm w-full">
+                        INICIAR NOVA APRESENTAÇÃO
+                      </button>
+                      <button type="button" id="btn-rodada-encerrar" class="btn danger-outline btn-sm w-full">
+                        ENCERRAR E ZERAR TEMPORÁRIO
+                      </button>
+                      <button type="button" id="btn-reset-rodada" class="btn purple-outline btn-sm w-full">
+                        RESET TEMPORÁRIO
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- CARD 2: MINIGAMES SELECIONADOS -->
+                  <div class="admin-block panel-card">
+                    <div class="panel-card-header-row">
+                      <h3 class="panel-card-title">MINIGAMES SELECIONADOS</h3>
+                      <label class="select-all-toggle">
+                        <span>SELECIONAR TODOS</span>
+                        <input type="checkbox" id="chk-select-all-minigames" checked />
+                      </label>
+                    </div>
+                    <div id="admin-minigames-checks" class="minigames-tactical-grid">
+                      <!-- Renderizado via JS -->
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SOLICITAÇÕES DE ACESSO -->
+                <div class="admin-block panel-card hidden" id="admin-solicitacoes-block">
+                  <h3 class="panel-card-title">SOLICITAÇÕES DE ACESSO (PROFESSORES)</h3>
+                  <p class="muted admin-hint">Professores tentando entrar na arena de minigames. Decida se aprova ou rejeita.</p>
+                  <ul id="admin-solicitacoes-list" class="cadastro-list ranking-list-compact"></ul>
+                </div>
+
+                <div class="admin-grid-middle">
+                  <!-- CARD 3: RANKING TEMPORÁRIO -->
+                  <div class="admin-block panel-card">
+                    <h3 class="panel-card-title">RANKING TEMPORÁRIO <span class="subtitle-hint">(Apresentação Atual)</span></h3>
+                    <div class="podium-preview-container">
+                      <ol id="admin-ranking-rodada" class="ranking-list ranking-list-compact"></ol>
+                    </div>
+                    <button type="button" id="btn-reset-rodada" class="btn purple-outline btn-sm w-full" style="margin-top: 12px;">
+                      RESET TEMPORÁRIO
+                    </button>
+                  </div>
+
+                  <!-- CARD 4: RANKING GLOBAL -->
+                  <div class="admin-block panel-card">
+                    <h3 class="panel-card-title">RANKING GLOBAL <span class="subtitle-hint">(Acumulado)</span></h3>
+                    <div class="global-preview-container">
+                      <div class="donut-chart-mock">
+                        <div class="donut-hole">🏆</div>
+                      </div>
+                      <ol id="admin-ranking-global" class="ranking-list ranking-list-compact"></ol>
+                    </div>
+                    <button type="button" id="btn-reset-global" class="btn purple-outline btn-sm w-full" style="margin-top: 12px;">
+                      RESET GLOBAL
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TAB 2: USUÁRIOS -->
+              <div id="tab-usuarios" class="tab-panel-content hidden">
+                <!-- CARD 5: GESTÃO DE USUÁRIOS E CADASTRO -->
+                <div class="admin-block panel-card">
+                  <h3 class="panel-card-title">GESTÃO DE USUÁRIOS E CADASTRO</h3>
+                  
+                  <div class="gestao-layout-grid">
+                    <div class="cadastro-left-box">
+                      <span class="column-subtitle">Configurações & Novo Cadastro</span>
+                      <label class="professor-toggle admin-restricao-toggle" id="restricao-toggle" for="chk-restricao-cadastro" style="margin-bottom: 20px;">
+                        <input type="checkbox" id="chk-restricao-cadastro" class="professor-toggle-input" />
+                        <span class="professor-toggle-card">
+                          <span class="professor-toggle-copy">
+                            <strong>EXIGIR NOMES CADASTRADOS</strong>
+                            <small>Só apelidos da lista podem entrar na arena</small>
+                          </span>
+                          <span class="professor-toggle-switch" aria-hidden="true"></span>
+                        </span>
+                      </label>
+
+                      <form id="form-cadastro-add" class="cadastro-add-form-custom form-stack">
+                        <label class="field">
+                          <span>NOME / APELIDO</span>
+                          <input name="nome" required minlength="2" maxlength="48" placeholder="Ex: Maria" />
+                        </label>
+                        
+                        <div class="login-identity cadastro-identity" style="margin-bottom: 16px;">
+                          <label class="field field-turma" id="field-cadastro-turma">
+                            <span>Turma (aluno)</span>
+                            <div class="select-wrap">
+                              <select name="turma" id="cadastro-select-turma">
+                                <option value="">Selecione a turma</option>
+                              </select>
+                              <span class="select-chevron" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+                                  <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                              </span>
+                            </div>
+                          </label>
+
+                          <label class="professor-toggle" id="cadastro-professor-toggle" for="cadastro-chk-professor">
+                            <input type="checkbox" name="ehProfessor" id="cadastro-chk-professor" class="professor-toggle-input" />
+                            <span class="professor-toggle-card">
+                              <span class="professor-toggle-copy">
+                                <strong>É professor</strong>
+                                <small>Cadastro sem vínculo de turma</small>
+                              </span>
+                              <span class="professor-toggle-switch" aria-hidden="true"></span>
+                            </span>
+                          </label>
+                        </div>
+                        
+                        <button type="submit" class="btn primary btn-sm w-full">Adicionar à lista</button>
+                      </form>
+                    </div>
+
+                    <div class="cadastro-right-box">
+                      <span class="column-subtitle">APELIDOS CADASTRADOS</span>
+                      <div class="list-container-scroll">
+                        <ol id="admin-cadastro-list" class="cadastro-list ranking-list-compact"></ol>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- CARD 6: GERENCIAMENTO DE JOGADORES -->
+                <div class="admin-block panel-card">
+                  <h3 class="panel-card-title">GERENCIAMENTO DE JOGADORES</h3>
+                  <p class="muted admin-hint" style="margin-bottom: 12px;">Ajuste pontuações, remova ou banir jogadores do sistema.</p>
+                  
+                  <div class="search-wrap" style="margin-bottom: 16px; display: flex; gap: 8px;">
+                    <input type="text" id="admin-busca-jogador" class="input-sm" placeholder="Buscar por apelido..." style="flex: 1;" />
+                    <button type="button" id="btn-admin-limpar-busca" class="btn ghost btn-sm">Limpar</button>
+                  </div>
+                  
+                  <div class="list-container-scroll max-height-300">
+                    <ul id="admin-jogadores-list" class="cadastro-list ranking-list-compact">
+                      <!-- Preenchido dinamicamente -->
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TAB 3: CONFIGURAÇÕES -->
+              <div id="tab-configuracoes" class="tab-panel-content hidden">
+                <div class="configuracoes-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                  <!-- CONTROLES GERAIS -->
+                  <div class="admin-block panel-card">
+                    <h3 class="panel-card-title">CONTROLES GERAIS</h3>
+                    <p id="admin-db-path" class="db-path muted" style="margin-bottom: 15px; font-family: var(--mono); font-size: 0.75rem; word-break: break-all;"></p>
+                    
+                    <div class="admin-actions-vertical" style="gap: 12px;">
+                      <button type="button" id="btn-admin-refresh" class="btn ghost w-full">Atualizar Painel</button>
+                      <button type="button" id="btn-admin-export" class="btn ghost w-full">Exportar Backup JSON</button>
+                      <button type="button" id="btn-admin-clear-stats" class="btn danger w-full">Zerar Contadores (Apres./Jogadores/Partidas)</button>
+                      <button type="button" id="btn-admin-reset" class="btn danger w-full">Zerar Banco Completo</button>
+                    </div>
+                  </div>
+
+                  <!-- TURMAS RANKING & ESTATÍSTICAS -->
+                  <div class="admin-block panel-card">
+                    <h3 class="panel-card-title">RANKING TURMAS</h3>
+                    <ol id="admin-ranking-turmas" class="ranking-list ranking-list-compact"></ol>
+                  </div>
+                </div>
+
+                <!-- CONTADORES RESUMO -->
+                <div class="admin-block panel-card" style="margin-top: 24px;">
+                  <h3 class="panel-card-title">CONTADORES E STATS DO EVENTO</h3>
+                  <div id="admin-stats" class="admin-stats admin-stats-4"></div>
+                </div>
+              </div>
+
+              <!-- HIDDEN/FALLBACK ACTIONS SO ORIGINAL SCRIPT STAYS VALID -->
+              <div style="display: none !important;">
+                <button type="button" id="btn-admin-logout">Sair</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chatbot Assistente AI Canva-Style -->
+    <div id="admin-chatbot" class="chatbot-container glass-card hidden">
+      <div class="chatbot-header" id="chatbot-header">
+        <div class="chatbot-avatar-wrap">
+          <span class="chatbot-avatar-icon">🤖</span>
+          <div class="chatbot-status-dot"></div>
+        </div>
+        <div class="chatbot-info">
+          <h4 id="chatbot-assistant-name">EuclidesAI</h4>
+          <span class="chatbot-status-text">Assistente Ativo</span>
+        </div>
+        <button type="button" id="btn-chatbot-toggle" class="btn ghost btn-sm btn-icon" aria-label="Minimizar chat">
+          <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
+            <path d="M19 13H5v-2h14v2z" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+      <div class="chatbot-body" id="chatbot-body">
+        <div class="chatbot-messages" id="chatbot-messages"></div>
+      </div>
+      <form id="chatbot-input-form" class="chatbot-input-form">
+        <input
+          type="text"
+          id="chatbot-input"
+          placeholder="Perguntar ao assistente..."
+          required
+          autocomplete="off"
+        />
+        <button type="submit" class="btn primary btn-sm btn-send" aria-label="Enviar">
+          <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="currentColor"/>
+          </svg>
+        </button>
+      </form>
+      <div class="chatbot-shortcuts">
+        <button type="button" class="btn ghost btn-xs chat-shortcut" data-cmd="iniciar rodada">Iniciar Rodada</button>
+        <button type="button" class="btn ghost btn-xs chat-shortcut" data-cmd="status">Status</button>
+        <button type="button" class="btn ghost btn-xs chat-shortcut" data-cmd="limpar rodada">Zerar Apres.</button>
+      </div>
+    </div>
+
+    <!-- MODAL AJUSTAR PONTOS -->
+    <div id="modal-ajustar-pontos" class="modal hidden">
+      <div class="modal-content glass-card">
+        <h3>Ajustar Pontos de <span id="modal-pontos-jogador-nome"></span></h3>
+        <form id="form-ajustar-pontos" class="form-stack">
+          <input type="hidden" id="modal-pontos-jogador-id" />
+          <label class="field">
+            <span>Operação</span>
+            <div class="select-wrap">
+              <select id="modal-pontos-operacao" required>
+                <option value="adicionar">Adicionar Pontos (+)</option>
+                <option value="subtrair">Remover Pontos (-)</option>
+                <option value="definir">Definir Pontos Exatos (=)</option>
+              </select>
+              <span class="select-chevron" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+                  <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </div>
+          </label>
+          <label class="field">
+            <span>Minigame (Fonte dos pontos)</span>
+            <div class="select-wrap">
+              <select id="modal-pontos-minigame" required>
+                <option value="admin-ajuste" selected>Ajuste Geral (admin-ajuste)</option>
+                <option value="operacoes-rapidas">Operações Rápidas</option>
+                <option value="quiz-euclides">Quiz de Euclides</option>
+                <option value="fracoes-puzzle">Quebra-Cabeça de Frações</option>
+                <option value="geometria-memoria">Memória Geométrica</option>
+                <option value="sequencia-logica">Sequência Lógica</option>
+                <option value="graficos-coordenadas">Gráficos & Coordenadas</option>
+                <option value="probabilidade-sorteador">Probabilidade na Prática</option>
+              </select>
+              <span class="select-chevron" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+                  <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </div>
+          </label>
+          <label class="field">
+            <span>Valor (Pontos)</span>
+            <input type="number" id="modal-pontos-valor" required min="0" max="1000000" placeholder="Ex: 50" />
+          </label>
+          <div class="modal-actions" style="margin-top: 16px; display: flex; gap: 8px; justify-content: flex-end;">
+            <button type="submit" class="btn primary">Confirmar</button>
+            <button type="button" id="btn-modal-pontos-cancelar" class="btn ghost">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- JS TABS & SIDEBAR LOGIC -->
+    <script>
+      // Sidebar Tab Switching
+      document.querySelectorAll('.sidebar-tab').forEach(button => {
+        button.addEventListener('click', () => {
+          // Remove active from all tabs
+          document.querySelectorAll('.sidebar-tab').forEach(b => b.classList.remove('active'));
+          // Add active to clicked tab
+          button.classList.add('active');
+          
+          // Hide all panel contents
+          document.querySelectorAll('.tab-panel-content').forEach(p => p.classList.add('hidden'));
+          
+          // Show target panel content
+          const targetId = button.dataset.tab;
+          const targetPanel = document.getElementById(targetId);
+          if (targetPanel) {
+            targetPanel.classList.remove('hidden');
+          }
+        });
+      });
+
+      // Tie logout button in sidebar to main logout trigger
+      document.getElementById('btn-admin-logout-sidebar')?.addEventListener('click', () => {
+        document.getElementById('btn-admin-logout')?.click();
+      });
+
+      // Select All Minigames Toggle
+      document.getElementById('chk-select-all-minigames')?.addEventListener('change', (e) => {
+        const checked = e.target.checked;
+        document.querySelectorAll('#admin-minigames-checks input[type="checkbox"]').forEach(cb => {
+          cb.checked = checked;
+        });
+      });
+    </script>
+
+    <script type="module" src="/src/admin-main.ts"></script>
+  </body>
+</html>

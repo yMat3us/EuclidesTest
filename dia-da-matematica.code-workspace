@@ -1,0 +1,11 @@
+{
+  "folders": [
+    { "path": ".", "name": "Dia da Matemática" },
+    { "path": "packages/shared", "name": "shared" },
+    { "path": "packages/server", "name": "server" },
+    { "path": "packages/client", "name": "client" }
+  ],
+  "settings": {
+    "typescript.tsdk": "node_modules/typescript/lib"
+  }
+}

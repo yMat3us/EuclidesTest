@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Euclides Test — Arena de minigames matemáticos com ranking global. ETE Pastor Isaac, Abreu e Lima — PE."
+    />
+    <title>Euclides Test — Arena Matemática</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <!-- Noise overlay & loading screen & custom cursor -->
+    <div class="noise-overlay" aria-hidden="true"></div>
+    <div id="loading-screen" class="loading-screen">
+      <div class="loading-content">
+        <div class="loading-logo">
+          <svg viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M6 22 L16 6 L26 22 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" />
+            <circle cx="16" cy="18" r="3.5" fill="currentColor" />
+          </svg>
+        </div>
+        <h1 class="loading-title">Euclides<span class="gradient-text">Test</span></h1>
+        <div class="loading-bar-container">
+          <div class="loading-bar-fill"></div>
+        </div>
+        <span class="loading-text muted">Carregando Arena Matemática...</span>
+      </div>
+    </div>
+
+
+    <div class="bg-mesh" aria-hidden="true"></div>
+    <div class="bg-grid" aria-hidden="true"></div>
+    <canvas id="math-particles-canvas" style="position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1; opacity: 0.95;"></canvas>
+    <div class="bg-orb bg-orb-1" aria-hidden="true"></div>
+    <div class="bg-orb bg-orb-2" aria-hidden="true"></div>
+
+    <div id="app" style="position: relative; z-index: 2;">
+      <header class="topbar glass">
+        <a href="#" class="brand" id="brand-home">
+          <span class="brand-mark">
+            <svg viewBox="0 0 32 32" aria-hidden="true">
+              <path
+                d="M6 22 L16 6 L26 22 Z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linejoin="round"
+              />
+              <circle cx="16" cy="18" r="3" fill="currentColor" />
+            </svg>
+          </span>
+          <div class="brand-text">
+            <span class="brand-name">Euclides<span class="brand-accent">Test</span></span>
+            <span class="subtitle">Dia da Matemática</span>
+          </div>
+        </a>
+
+        <nav class="main-nav">
+          <button type="button" class="nav-tab active" data-view="home">🏠 Início</button>
+          <button type="button" class="nav-tab" data-view="grupo">🇧🇷 Sobre o Grupo</button>
+          <button type="button" class="nav-tab" id="nav-tab-arena" data-view="login">🏆 Arena Competitiva</button>
+        </nav>
+
+        <nav class="topbar-actions">
+          <button type="button" id="btn-theme-toggle" class="btn-theme-toggle" aria-label="Alternar Tema">
+            <span class="theme-icon theme-icon-sun">☀️</span>
+            <span class="theme-icon theme-icon-moon">🌙</span>
+          </button>
+          <div id="player-badge" class="player-badge glass hidden">
+            <span class="player-avatar" id="player-initial">?</span>
+            <span class="player-label"
+              ><span class="muted">Olá,</span>
+              <strong id="player-name">Jogador</strong></span
+            >
+            <button type="button" id="btn-logout" class="btn ghost btn-sm">Sair</button>
+          </div>
+        </nav>
+      </header>
+
+      <main id="view-hub" class="view page-content">
+        <!-- PÁGINA INICIAL (HOME) -->
+        <section id="home-panel" class="view-section">
+          <div class="hero-layout">
+            <div class="hero-left">
+              <div class="hero-copy animate-in">
+                <span class="pill pill-live">Copa do Mundo & Matemática 🇧🇷</span>
+                <h2 class="hero-title">
+                  Euclides<span class="gradient-text">Test</span>
+                </h2>
+                <p class="hero-desc">
+                  Explore atividades interativas com tema de futebol, desafie seu raciocínio lógico e dispute o topo do pódio global da nossa Arena Matemática.
+                </p>
+                
+                <div class="home-cta-group" style="margin-top: 24px; margin-bottom: 32px;">
+                  <button type="button" class="btn primary btn-glow btn-go-arena">Entrar na Arena Competitiva</button>
+                </div>
+              </div>
+
+              <!-- Galileo Galilei Math Quote Card from Math4.jpeg reference -->
+              <div class="glass-card quote-card animate-in delay-1" style="display: flex; flex-direction: column; justify-content: center; padding: 24px; border-left: 4px solid var(--copa-amarelo); background: rgba(10, 10, 18, 0.7); position: relative; overflow: hidden; margin-top: 20px;">
+                <div style="font-size: 3rem; color: var(--copa-amarelo); opacity: 0.25; position: absolute; top: -10px; left: 15px; font-family: Georgia, serif; pointer-events: none;">“</div>
+                <p style="font-size: 1.05rem; font-style: italic; line-height: 1.5; color: #fff; margin-bottom: 12px; font-weight: 500; position: relative; z-index: 1;">
+                  &ldquo;A matemática é a linguagem com que Deus escreveu o universo.&rdquo;
+                </p>
+                <span style="font-weight: 600; font-size: 0.82rem; color: var(--copa-verde); text-transform: uppercase; letter-spacing: 1px;">— Galileo Galilei</span>
+                <div style="margin-top: 16px; padding-top: 12px; border-top: 1px dashed rgba(255,255,255,0.1); display: flex; gap: 8px; flex-wrap: wrap;">
+                  <span class="pill" style="background: rgba(59, 130, 246, 0.15); color: var(--copa-azul);">#Criatividade</span>
+                  <span class="pill" style="background: rgba(34, 197, 94, 0.15); color: var(--copa-verde);">#Lógica</span>
+                  <span class="pill" style="background: rgba(234, 179, 8, 0.15); color: var(--copa-amarelo);">#Razão</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- New Right Column Hero Illustration Frame -->
+            <div class="hero-right animate-in delay-2">
+              <div class="hero-media-frame glass-card">
+                <div class="media-frame-glow"></div>
+                <img src="/math_football_hero.jpg" alt="Euclides Test - Matemática e Futebol" class="hero-illustration" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Seção de Recursos de Aprendizado (Sem imagens, design puro baseado nas referências) -->
+          <div class="home-features-section" style="margin-top: 48px;">
+            <h3 class="section-label" style="margin-bottom: 24px; text-align: center; letter-spacing: 1px;">LÓGICA, CRIATIVIDADE, RAZÃO E INFINITAS POSSIBILIDADES!</h3>
+            <div class="gallery-grid">
+              <div class="gallery-item glass-card" style="border-top: 3px solid var(--copa-verde);">
+                <div class="gallery-desc">
+                  <div style="font-size: 2rem; margin-bottom: 8px;">⚡</div>
+                  <h4>Operações Rápidas</h4>
+                  <p>Resolva o máximo de equações de aritmética sob pressão em 2 minutos.</p>
+                </div>
+              </div>
+              <div class="gallery-item glass-card" style="border-top: 3px solid var(--copa-amarelo);">
+                <div class="gallery-desc">
+                  <div style="font-size: 2rem; margin-bottom: 8px;">📐</div>
+                  <h4>Quiz de Euclides</h4>
+                  <p>Desafie-se sobre postulados, axiomas e história da geometria clássica.</p>
+                </div>
+              </div>
+              <div class="gallery-item glass-card" style="border-top: 3px solid var(--copa-azul);">
+                <div class="gallery-desc">
+                  <div style="font-size: 2rem; margin-bottom: 8px;">🧩</div>
+                  <h4>Quebra-Cabeça de Frações</h4>
+                  <p>Combine frações numéricas equivalentes e forme padrões inteiros.</p>
+                </div>
+              </div>
+              <div class="gallery-item glass-card" style="border-top: 3px solid var(--copa-verde);">
+                <div class="gallery-desc">
+                  <div style="font-size: 2rem; margin-bottom: 8px;">🃏</div>
+                  <h4>Memória Geométrica</h4>
+                  <p>Combine figuras geométricas clássicas e definições de ângulos correspondentes.</p>
+                </div>
+              </div>
+              <div class="gallery-item glass-card" style="border-top: 3px solid var(--copa-amarelo);">
+                <div class="gallery-desc">
+                  <div style="font-size: 2rem; margin-bottom: 8px;">∞</div>
+                  <h4>Sequência Lógica</h4>
+                  <p>Desvende sequências numéricas complexas e padrões de figuras geométricas.</p>
+                </div>
+              </div>
+              <div class="gallery-item glass-card" style="border-top: 3px solid var(--copa-azul);">
+                <div class="gallery-desc">
+                  <div style="font-size: 2rem; margin-bottom: 8px;">📈</div>
+                  <h4>Gráficos & Coordenadas</h4>
+                  <p>Identifique e marque pontos e quadrantes no plano cartesiano bidimensional.</p>
+                </div>
+              </div>
+              <div class="gallery-item glass-card" style="border-top: 3px solid var(--copa-verde);">
+                <div class="gallery-desc">
+                  <div style="font-size: 2rem; margin-bottom: 8px;">🎲</div>
+                  <h4>Probabilidade na Prática</h4>
+                  <p>Calcule chances, sorteios e experimentos de probabilidade e estatística simples.</p>
+                </div>
+              </div>
+              <div class="gallery-item glass-card" style="border-top: 3px solid var(--copa-amarelo);">
+                <div class="gallery-desc">
+                  <div style="font-size: 2rem; margin-bottom: 8px;">🍕</div>
+                  <h4>Frações com Figuras</h4>
+                  <p>Aprenda e compita interpretando frações com gráficos circulares, barras e conjuntos.</p>
+                </div>
+              </div>
+              <div class="gallery-item glass-card" style="border-top: 3px solid var(--copa-azul);">
+                <div class="gallery-desc">
+                  <div style="font-size: 2rem; margin-bottom: 8px;">🧠</div>
+                  <h4>Raciocínio Lógico</h4>
+                  <p>Resolva equações com símbolos e desafios de dedução aplicados ao futebol.</p>
+                </div>
+              </div>
+              <div class="gallery-item glass-card" style="border-top: 3px solid var(--copa-verde);">
+                <div class="gallery-desc">
+                  <div style="font-size: 2rem; margin-bottom: 8px;">⚽</div>
+                  <h4>Matemática na Copa</h4>
+                  <p>Problemas de futebol sobre médias de gols, capacidade de estádios e geometria de campo.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+
+        <!-- SOBRE O GRUPO -->
+        <section id="grupo-panel" class="view-section hidden">
+          <div class="about-group-layout">
+            <div class="about-hero animate-in">
+              <span class="pill">Integrantes do Projeto</span>
+              <h2>Nossa Equipe</h2>
+              <p class="muted text-center max-w-600">
+                Somos estudantes da ETE Pastor Isaac Martins Rodrigues (Abreu e Lima - PE). Criamos o <strong>Euclides Test</strong> para tornar o aprendizado de matemática dinâmico, interativo e divertido, unindo a paixão nacional pelo futebol com a ciência dos números.
+              </p>
+            </div>
+
+            <!-- Exibição direta dos integrantes -->
+
+            <div class="team-members-list">
+              <div class="member-card glass-card animate-in delay-1">
+                <div class="member-avatar"><img src="/Plinyl.jpeg" alt="Plinyl Mateus" class="member-photo" /></div>
+                <h3>Plinyl Mateus</h3>
+                <span class="member-role">Desenvolvimento</span>
+                <p class="muted text-sm">Arquitetura de sistema, APIs, integração SSE em tempo real e banco de dados.</p>
+                <div class="member-socials">
+                  <a href="https://github.com/yMat3us/My" target="_blank" rel="noopener noreferrer" class="social-link" data-tooltip="GitHub">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.579.688.481C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+                  </a>
+                  <a href="https://www.linkedin.com/in/plinyl-mateus-06b659384?utm_source=share_via&amp;utm_content=profile&amp;utm_medium=member_android" target="_blank" rel="noopener noreferrer" class="social-link" data-tooltip="LinkedIn">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                  </a>
+                  <a href="https://www.instagram.com/mateusvj?igsh=ZTNjdGZ3Zm9xY2Mx" target="_blank" rel="noopener noreferrer" class="social-link" data-tooltip="Instagram">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204 .013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                  </a>
+                </div>
+              </div>
+              <div class="member-card glass-card animate-in delay-2">
+                <div class="member-avatar"><img src="/Alisson.jpeg" alt="Alisson Vinícius" class="member-photo" /></div>
+                <h3>Alisson Vinícius</h3>
+                <span class="member-role">Design</span>
+                <p class="muted text-sm">Criação dos roteiros dos minigames, roteiros pedagógicos, testes de fluxo e design visual.</p>
+                <div class="member-socials">
+                  <a href="https://github.com/alissonvinicius-tech" target="_blank" rel="noopener noreferrer" class="social-link" data-tooltip="GitHub">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.579.688.481C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+                  </a>
+                  <a href="https://www.linkedin.com/in/alisson-vinicius-tech" target="_blank" rel="noopener noreferrer" class="social-link" data-tooltip="LinkedIn">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                  </a>
+                  <a href="https://www.instagram.com/eu.viniciusxd?igsh=MWNiN3JrbnV0amM4eQ==" target="_blank" rel="noopener noreferrer" class="social-link" data-tooltip="Instagram">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204 .013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                  </a>
+                </div>
+              </div>
+              <div class="member-card glass-card animate-in delay-3">
+                <div class="member-avatar"><img src="/Rikelmy.jpeg" alt="Rikelmy Ferreira" class="member-photo" /></div>
+                <h3>Rikelmy Ferreira</h3>
+                <span class="member-role">Estratégia & Planejamento</span>
+                <p class="muted text-sm">Planejamento completo do projeto, sugestor de ideias, criador de métodos, definidor de escopos, priorizador de funcionalidades e garantia de produto final com base nos objetivos desejados.</p>
+                <div class="member-socials">
+                  <a href="javascript:void(0)" class="social-link disabled" data-tooltip="GitHub (Indisponível)">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.579.688.481C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+                  </a>
+                  <a href="javascript:void(0)" class="social-link disabled" data-tooltip="LinkedIn (Indisponível)">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                  </a>
+                  <a href="https://www.instagram.com/ferreira.f22?igsh=cHpyeGp5OWE5cTcz" target="_blank" rel="noopener noreferrer" class="social-link" data-tooltip="Instagram">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204 .013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                  </a>
+                </div>
+              </div>
+              <div class="member-card glass-card animate-in delay-4">
+                <div class="member-avatar"><img src="/Lucas.jpeg" alt="Lucas Barbosa" class="member-photo" /></div>
+                <h3>Lucas Barbosa</h3>
+                <span class="member-role">Tematização</span>
+                <p class="muted text-sm">Testes de usabilidade, validação de regras de frações, verificação lógica, ilustrações matemáticas e pesquisa de tema da Copa do Mundo.</p>
+                <div class="member-socials">
+                  <a href="javascript:void(0)" class="social-link disabled" data-tooltip="GitHub (Indisponível)">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.579.688.481C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+                  </a>
+                  <a href="javascript:void(0)" class="social-link disabled" data-tooltip="LinkedIn (Indisponível)">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                  </a>
+                  <a href="https://www.instagram.com/_baarbosa_lucas?igsh=MXZiZGI4bmNjZXhwMg==" target="_blank" rel="noopener noreferrer" class="social-link" data-tooltip="Instagram">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204 .013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                  </a>
+                </div>
+              </div>
+              <div class="member-card glass-card animate-in delay-5">
+                <div class="member-avatar"><img src="/Marcelo.jpeg" alt="Marcelo Fernandes" class="member-photo" /></div>
+                <h3>Marcelo Fernandes</h3>
+                <span class="member-role">Monitor</span>
+                <p class="muted text-sm">Supervisor de apresentações, suporte administrativo e inspecionador de tarefas.</p>
+                <div class="member-socials">
+                  <a href="javascript:void(0)" class="social-link disabled" data-tooltip="GitHub (Indisponível)">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.579.688.481C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+                  </a>
+                  <a href="javascript:void(0)" class="social-link disabled" data-tooltip="LinkedIn (Indisponível)">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                  </a>
+                  <a href="https://www.instagram.com/marcelloozx?igsh=MW1kcTQ5NjZuZDh2Yw==" target="_blank" rel="noopener noreferrer" class="social-link" data-tooltip="Instagram">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204 .013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ENTRAR NO JOGO (LOGIN) -->
+        <section id="login-panel" class="view-section hidden">
+          <div class="hero-layout">
+            <div class="hero-copy animate-in">
+              <span class="pill">ETE Pastor Isaac · PE</span>
+              <h2 class="hero-title">
+                Arena de<br />
+                <span class="gradient-text">Competição</span>
+              </h2>
+              <p class="hero-desc">
+                Minigames, pontuação em tempo real e pódio global — participe do evento oficial da ETE Isaac!
+              </p>
+              <ul class="hero-stats">
+                <li><strong>10</strong><span>desafios</span></li>
+                <li><strong>4.6k</strong><span>pontos máx.</span></li>
+                <li><strong>Live</strong><span>ranking</span></li>
+              </ul>
+            </div>
+
+            <div class="glass-card login-card animate-in delay-1">
+              <div class="panel-head">
+                <h2>Entrar no Jogo</h2>
+                <p class="muted">Escolha um apelido e comece</p>
+              </div>
+              <form id="login-form" class="form-stack">
+                <div class="floating-field">
+                  <input
+                    name="apelido"
+                    id="login-apelido"
+                    required
+                    minlength="2"
+                    maxlength="24"
+                    placeholder=" "
+                    autocomplete="nickname"
+                  />
+                  <label for="login-apelido">Apelido</label>
+                </div>
+                <div class="login-identity">
+                  <label class="field field-turma" id="field-turma">
+                    <span class="field-label">
+                      <span class="field-label-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
+                          <path
+                            d="M4 8h16M4 12h10M4 16h14"
+                            stroke="currentColor"
+                            stroke-width="1.75"
+                            stroke-linecap="round"
+                          />
+                          <circle cx="18" cy="12" r="2.5" fill="currentColor" />
+                        </svg>
+                      </span>
+                      Turma
+                    </span>
+                    <div class="select-wrap">
+                      <select name="turma" id="select-turma" required>
+                        <option value="">Selecione sua Turma</option>
+                      </select>
+                      <span class="select-chevron" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+                          <path
+                            d="M6 9l6 6 6-6"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                      </span>
+                    </div>
+                  </label>
+
+                  <label class="professor-toggle" id="professor-toggle" for="chk-professor">
+                    <input
+                      type="checkbox"
+                      name="souProfessor"
+                      id="chk-professor"
+                      class="professor-toggle-input"
+                    />
+                    <span class="professor-toggle-card">
+                      <span class="professor-toggle-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+                          <path
+                            d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"
+                            stroke="currentColor"
+                            stroke-width="1.75"
+                          />
+                          <path
+                            d="M4 20c0-3.3 3.6-6 8-6s8 2.7 8 6"
+                            stroke="currentColor"
+                            stroke-width="1.75"
+                            stroke-linecap="round"
+                          />
+                        </svg>
+                      </span>
+                      <span class="professor-toggle-copy">
+                        <strong>Sou Professor</strong>
+                        <small>Entrada sem vínculo de turma</small>
+                      </span>
+                      <span class="professor-toggle-switch" aria-hidden="true"></span>
+                    </span>
+                  </label>
+                </div>
+                <p id="login-aviso" class="hint-box hidden"></p>
+                <button type="submit" class="btn primary btn-glow">
+                  <span>Começar</span>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path
+                      d="M5 12h14M13 6l6 6-6 6"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </button>
+              </form>
+
+              <!-- Fila de aprovação para Professor -->
+              <div id="login-aprovacao-modal" class="login-overlay hidden">
+                <div class="login-overlay-content">
+                  <div class="spinner"></div>
+                  <h3>Solicitação Enviada</h3>
+                  <p class="muted">Aguardando aprovação do professor administrador...</p>
+                  <p class="admin-request-name">Apelido: <strong id="aprovacao-apelido">Maria</strong></p>
+                  <button type="button" id="btn-cancelar-aprovacao" class="btn ghost btn-sm">Cancelar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SEUS DESAFIOS (ARENA) -->
+        <section id="arena-panel" class="view-section hidden">
+          <!-- Premium User Dashboard Section -->
+          <div class="user-dashboard-row animate-in">
+            <!-- Left: Player Stats Profile Box -->
+            <div class="glass-card user-profile-card">
+              <div class="user-profile-details">
+                <span class="user-avatar-decor" id="dash-avatar">⚽</span>
+                <div>
+                  <h3 id="dash-username">Jogador</h3>
+                  <span id="dash-class" class="pill">Carregando...</span>
+                </div>
+              </div>
+              
+              <!-- Sports Dashboard style stats grid -->
+              <div class="sports-stats-grid">
+                <div class="sports-stat-box">
+                  <span class="stat-label">⚽ Acertos</span>
+                  <strong class="stat-value" id="stat-gols">0</strong>
+                </div>
+                <div class="sports-stat-box">
+                  <span class="stat-label">🏟️ Partidas</span>
+                  <strong class="stat-value" id="stat-partidas">0/7</strong>
+                </div>
+                <div class="sports-stat-box">
+                  <span class="stat-label">🏆 Total Global</span>
+                  <strong class="stat-value" id="stat-pontos">0 pts</strong>
+                </div>
+                <div class="sports-stat-box">
+                  <span class="stat-label">⚡ Aproveitamento</span>
+                  <strong class="stat-value" id="stat-aproveitamento">0%</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Progress & Status (Hidden to preserve JS state variables without throwing errors) -->
+            <div class="glass-card user-progress-card hidden" style="display: none !important;">
+              <h3 class="dash-section-title">Progresso da Competição</h3>
+              <p class="muted text-sm" style="margin-bottom: 12px;">Complete os desafios ativos para maximizar sua pontuação.</p>
+              
+              <!-- Progress Bar -->
+              <div class="progress-bar-wrapper">
+                <div class="progress-bar-info">
+                  <span>Desafios Completados</span>
+                  <strong id="progress-percent">0%</strong>
+                </div>
+                <div class="progress-bar-track">
+                  <div class="progress-bar-fill" id="progress-bar-fill" style="width: 0%;"></div>
+                </div>
+              </div>
+
+              <!-- Presentation Status Widget -->
+              <div class="rodada-widget-box" id="rodada-widget">
+                <span class="widget-dot" id="widget-dot"></span>
+                <div>
+                  <strong id="widget-title">Aguardando Apresentação</strong>
+                  <span class="muted text-xs" id="widget-desc">O professor liberará as partidas em instantes.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-head" style="margin-top: 32px;">
+            <div>
+              <span class="pill pill-live">Desafios</span>
+              <h2>Atividades de Matemática</h2>
+            </div>
+            <div class="arena-actions">
+              <button id="btn-ranking" class="btn primary btn-glow">Ver Rankings</button>
+            </div>
+          </div>
+          
+          <div id="arena-bloqueio" class="arena-bloqueio glass-card hidden">
+            <p><strong>Apresentação não iniciada</strong></p>
+            <p class="muted">Aguarde o professor liberar os desafios após a apresentação no projetor.</p>
+          </div>
+          <div id="minigame-grid" class="minigame-grid"></div>
+        </section>
+
+        <!-- RANKING -->
+        <section id="ranking-panel" class="view-section hidden">
+          <div class="section-head">
+            <div>
+              <span class="pill">Competição</span>
+              <h2>Rankings</h2>
+              <p id="ranking-subtitle" class="muted"></p>
+            </div>
+            <button id="btn-back-hub" class="btn ghost">← Arena</button>
+          </div>
+
+          <div class="ranking-tabs" role="tablist">
+            <button
+              type="button"
+              class="ranking-tab active"
+              data-tab="global"
+              role="tab"
+              aria-selected="true"
+            >
+              Global
+            </button>
+            <button
+              type="button"
+              class="ranking-tab"
+              data-tab="rodada"
+              role="tab"
+              aria-selected="false"
+            >
+              Apresentação
+            </button>
+            <button
+              type="button"
+              class="ranking-tab"
+              data-tab="turma"
+              role="tab"
+              aria-selected="false"
+            >
+              Turmas
+            </button>
+          </div>
+
+          <div class="podium-wrap glass-card">
+            <div id="podium-3d" class="podium-3d-layout"></div>
+            <ol id="ranking-list" class="ranking-list"></ol>
+            <p id="ranking-updated" class="muted ranking-meta"></p>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <div class="footer-glow" aria-hidden="true"></div>
+        <div class="footer-inner">
+          <div class="footer-brand-block">
+            <span class="brand-mark footer-logo">
+              <svg viewBox="0 0 32 32" aria-hidden="true">
+                <path
+                  d="M6 22 L16 6 L26 22 Z"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <circle cx="16" cy="18" r="3" fill="currentColor" />
+              </svg>
+            </span>
+            <div>
+              <p class="footer-title">Euclides<span>Test</span></p>
+              <p class="footer-tagline">Arena Matemática · Projeto Escolar 2026</p>
+            </div>
+          </div>
+
+          <div class="footer-columns">
+            <div class="footer-col">
+              <h4>Instituição</h4>
+              <p>ETE Pastor Isaac Martins Rodrigues</p>
+              <p>Abreu e Lima, Pernambuco</p>
+              <p class="footer-event">Dia da Matemática</p>
+            </div>
+            <div class="footer-col">
+              <h4>Desenvolvimento</h4>
+              <p><strong>Plinyl Mateus</strong></p>
+              <p class="muted">Lead dev & arquitetura</p>
+            </div>
+            <div class="footer-col">
+              <h4>Equipe</h4>
+              <ul class="footer-team">
+                <li>Alisson Vinícius</li>
+                <li>Rikelmy Ferreira</li>
+                <li>Lucas Barbosa</li>
+                <li>Marcelo Fernandes</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="footer-bar">
+            <span>© 2026 Euclides Test. Todos os direitos do projeto à equipe.</span>
+            <button type="button" id="btn-credits" class="btn ghost btn-sm">
+              Sobre o Projeto
+            </button>
+          </div>
+        </div>
+      </footer>
+
+      <div id="game-container" class="game-container hidden"></div>
+    </div>
+
+    <dialog id="credits-dialog" class="credits-dialog glass-card">
+      <button type="button" class="dialog-close" id="btn-close-credits" aria-label="Fechar">
+        ×
+      </button>
+      <div class="credits-header">
+        <span class="brand-mark large">
+          <svg viewBox="0 0 32 32" aria-hidden="true">
+            <path
+              d="M6 22 L16 6 L26 22 Z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+            <circle cx="16" cy="18" r="3" fill="currentColor" />
+          </svg>
+        </span>
+        <h2>Euclides Test</h2>
+        <p class="gradient-text">Dia da Matemática 2026</p>
+      </div>
+      <div class="credits-body">
+        <article class="credit-card">
+          <span class="credit-role">Desenvolvedor</span>
+          <strong>Plinyl Mateus</strong>
+          <p>Arquitetura, backend, interface e minigames</p>
+        </article>
+        <article class="credit-card">
+          <span class="credit-role">Equipe</span>
+          <ul class="team-list">
+            <li>Alisson Vinícius</li>
+            <li>Rikelmy Ferreira</li>
+            <li>Lucas Barbosa</li>
+            <li>Marcelo Fernandes</li>
+          </ul>
+        </article>
+        <article class="credit-card">
+          <span class="credit-role">Escola</span>
+          <strong>ETE Pastor Isaac Martins Rodrigues</strong>
+          <p>Abreu e Lima · Pernambuco</p>
+        </article>
+      </div>
+      <p class="credits-footer muted">Obrigado!</p>
+    </dialog>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -15,6 +15,7 @@
     "typecheck": "npm run typecheck -w @ddm/shared && npm run typecheck -w @ddm/server && npm run typecheck -w @ddm/client"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "concurrently": "^9.1.2",
+    "typescript": "6.0.3"
   }
 }

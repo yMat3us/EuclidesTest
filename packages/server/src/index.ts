@@ -7,8 +7,8 @@ import { fileURLToPath } from "node:url";
 import { dbPath, initializeMongoAndSync } from "./db/index.js";
 import { registerRoutes } from "./routes.js";
 
-const port = Number(process.env.PORT) || 3001;
-const host = process.env.HOST ?? "0.0.0.0";
+const port = Number(process.env.PORT);
+const host = process.env.HOST;
 
 const app = Fastify({ logger: true });
 

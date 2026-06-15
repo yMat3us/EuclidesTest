@@ -2,7 +2,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig, type Plugin } from "vite";
 
-const CLIENT_PORT = 5173;
+const CLIENT_PORT = Number(process.env.PORT);
 const clientDir = path.dirname(fileURLToPath(import.meta.url));
 
 function logAdminUrl(): Plugin {
@@ -43,7 +43,7 @@ export default defineConfig({
   },
   plugins: [logAdminUrl()],
   server: {
-    host: process.env.HOST ?? "0.0.0.0",
+    host: process.env.HOST,
     port: CLIENT_PORT,
     proxy: {
       "/api": "http://127.0.0.1:3001",

@@ -66,7 +66,10 @@ export async function triggerSave() {
 export async function initializeMongoAndSync() {
   try {
     console.log("Conectando ao MongoDB para obter o banco de dados...");
-    mongoClient = new MongoClient(MONGO_URI);
+    mongoClient = new MongoClient(MONGO_URI, {
+      connectTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 5000,
+    });
     await mongoClient.connect();
     
     const dbName = mongoClient.options.dbName || "euclides_test";

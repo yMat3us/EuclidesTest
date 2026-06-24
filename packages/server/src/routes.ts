@@ -58,6 +58,40 @@ import crypto from "node:crypto";
 
 const sseConexoes = new Set<any>();
 
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+
+function extrairJsonLimpo(texto: string): string {
+  let limpo = texto.trim();
+  if (limpo.startsWith("```json")) {
+    limpo = limpo.slice(7);
+  } else if (limpo.startsWith("```")) {
+    limpo = limpo.slice(3);
+  }
+  if (limpo.endsWith("```")) {
+    limpo = limpo.slice(0, -3);
+  }
+  return limpo.trim();
+}
+
+function compararNumerosWhatsApp(num1: string, num2: string): boolean {
+  const n1 = num1.replace(/\D/g, "");
+  const n2 = num2.replace(/\D/g, "");
+  if (n1 === n2) return true;
+
+  const limparBR = (num: string) => {
+    let s = num;
+    if (s.startsWith("55") && s.length >= 10) {
+      s = s.substring(2);
+    }
+    if (s.length === 11 && s[2] === "9") {
+      s = s.substring(0, 2) + s.substring(3);
+    }
+    return s;
+  };
+
+  return limparBR(n1) === limparBR(n2);
+}
+
 const solicitacoesProfessores = new Map<string, {
   id: string;
   apelido: string;
@@ -1034,7 +1068,7 @@ export async function registerRoutes(app: FastifyInstance) {
         `;
 
         const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`,
           {
             method: "POST",
             headers: {
@@ -1068,7 +1102,7 @@ export async function registerRoutes(app: FastifyInstance) {
           throw new Error("Resposta da API do Gemini vazia");
         }
 
-        const parsed = JSON.parse(textResponse.trim());
+        const parsed = JSON.parse(extrairJsonLimpo(textResponse));
         
         let respostaExecucao = "";
         if (parsed.comando) {
@@ -1190,14 +1224,14 @@ export async function registerRoutes(app: FastifyInstance) {
     const apiUrl = process.env.WHATSAPP_API_URL;
     const token = process.env.WHATSAPP_API_KEY || process.env.WHATSAPP_TOKEN;
 
-    if (!provider || !apiUrl) {
+    if (!provider || (provider !== "twilio" && !apiUrl)) {
       console.log(`[WhatsApp Mock] Para: ${numero} | Mensagem: ${texto}`);
       return;
     }
 
     try {
       if (provider === "evolution") {
-        await fetch(apiUrl, {
+        await fetch(apiUrl!, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -1231,7 +1265,7 @@ export async function registerRoutes(app: FastifyInstance) {
           console.log(`[Twilio API Response] Status: ${res.status}`, resJson);
         }
       } else if (provider === "zapi") {
-        await fetch(apiUrl, {
+        await fetch(apiUrl!, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -1243,7 +1277,7 @@ export async function registerRoutes(app: FastifyInstance) {
           })
         });
       } else {
-        await fetch(apiUrl, {
+        await fetch(apiUrl!, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -1480,7 +1514,7 @@ export async function registerRoutes(app: FastifyInstance) {
         `;
 
         const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -1503,7 +1537,7 @@ export async function registerRoutes(app: FastifyInstance) {
           const data: any = await response.json();
           const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
           if (textResponse) {
-            const parsed = JSON.parse(textResponse.trim());
+            const parsed = JSON.parse(extrairJsonLimpo(textResponse));
             await enviarMensagemWhatsApp(from, parsed.resposta);
             if (parsed.comando) {
               await executarComandoWhatsAppLocal(parsed.comando, from);
@@ -1912,9 +1946,7 @@ Para baixar o backup em JSON completo, acesse a área administrativa do site no 
 
     const adminNumber = process.env.WHATSAPP_ADMIN_NUMBER;
     if (adminNumber) {
-      const cleanFrom = from.replace(/\D/g, "");
-      const cleanAdmin = adminNumber.replace(/\D/g, "");
-      if (!cleanFrom.includes(cleanAdmin) && !cleanAdmin.includes(cleanFrom)) {
+      if (!compararNumerosWhatsApp(from, adminNumber)) {
         console.log(`[WhatsApp Security] Ignorando mensagem de número não autorizado: ${from}`);
         return reply.status(403).send({ erro: "Número não autorizado" });
       }

@@ -1134,6 +1134,10 @@ input:focus {
   z-index: 1;
   border-radius: var(--radius);
   box-shadow: var(--shadow-glow);
+  max-width: 92vw !important;
+  max-height: 70vh !important;
+  height: auto !important;
+  aspect-ratio: 800 / 500;
 }
 
 /* ─── Footer ─── */
@@ -2343,6 +2347,27 @@ input:focus {
   white-space: nowrap;
 }
 
+/* ─── Chatbot inside tab mode ─── */
+#tab-chatbot .chatbot-container {
+  position: relative !important;
+  bottom: auto !important;
+  right: auto !important;
+  width: 100% !important;
+  max-width: 800px !important;
+  height: 600px !important;
+  max-height: calc(100vh - 180px) !important;
+  margin: 0 auto !important;
+  z-index: 1 !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+  border-radius: var(--radius-lg) !important;
+  background: rgba(12, 12, 20, 0.5) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+#tab-chatbot #btn-chatbot-toggle {
+  display: none !important;
+}
+
 /* ─── Pending Approval Overlay ─── */
 .login-card {
   position: relative;
@@ -2479,24 +2504,76 @@ body {
   color: var(--copa-amarelo);
 }
 
-/* Menu de navegação superior (main-nav) */
-.main-nav {
-  display: flex;
-  gap: 0.25rem;
-  overflow-x: auto;
-  white-space: nowrap;
-  scrollbar-width: none; /* Firefox */
-  padding: 4px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: var(--radius-full);
+/* Container de Navegação Desktop com Dropdown */
+.nav-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* Botão de 3 Pontinhos */
+.btn-nav-dropdown {
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border);
-  max-width: 100%;
+  color: var(--text-secondary);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-out);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  outline: none;
+}
+
+.btn-nav-dropdown:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.btn-nav-dropdown:active {
+  transform: translateY(0);
+}
+
+/* Menu de navegação superior (main-nav) estilizado como dropdown no desktop */
+.main-nav {
+  position: absolute;
+  top: calc(100% + 0.6rem);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 6px;
+  background: rgba(10, 10, 18, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  min-width: 200px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+  transform-origin: top right;
+  pointer-events: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.main-nav.open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
 }
 
 .main-nav::-webkit-scrollbar {
   display: none; /* Safari e Chrome */
 }
 
+/* Itens de navegação do dropdown */
 .nav-tab {
   background: transparent;
   border: none;
@@ -2504,23 +2581,55 @@ body {
   font-family: var(--font);
   font-size: 0.88rem;
   font-weight: 500;
-  padding: 8px 16px;
-  border-radius: var(--radius-full);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.2s var(--ease-out);
   outline: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
 }
 
 .nav-tab:hover {
   color: var(--text);
-  background: var(--surface-hover);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .nav-tab.active {
-  color: #000;
-  background: var(--copa-amarelo);
+  background: linear-gradient(135deg, var(--copa-verde), var(--copa-azul));
+  color: #030308 !important;
   font-weight: 600;
-  box-shadow: 0 0 12px rgba(234, 179, 8, 0.4);
+  box-shadow: 0 4px 15px rgba(0, 255, 135, 0.2);
+}
+
+.nav-tab-admin-mobile {
+  display: none !important;
+}
+
+/* Suporte ao Tema Claro no Dropdown */
+[data-theme="light"] .btn-nav-dropdown {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.08);
+  color: var(--text-secondary);
+}
+
+[data-theme="light"] .btn-nav-dropdown:hover {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.15);
+  color: var(--text);
+}
+
+[data-theme="light"] .main-nav {
+  background: rgba(255, 255, 255, 0.98);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .nav-tab:hover {
+  background: rgba(0, 0, 0, 0.04);
 }
 
 #nav-tab-arena {
@@ -2842,11 +2951,12 @@ body {
 .game-container {
   background: radial-gradient(circle at center, rgba(34, 197, 94, 0.15), rgba(10, 10, 18, 0.98)), var(--bg) !important;
   backdrop-filter: blur(8px);
+  overflow: hidden !important; /* Evita qualquer scroll indesejado e esconde barras */
 }
 
 .game-container::before {
   content: "";
-  position: absolute;
+  position: fixed; /* Alterado de absolute para fixed para cobrir toda a tela mesmo com redimensionamentos */
   inset: 0;
   background-image: url('/Math1.jpg'), url('/Math2.webp');
   background-size: cover, 400px 400px;
@@ -2860,7 +2970,7 @@ body {
 
 .game-container::after {
   content: "";
-  position: absolute;
+  position: fixed; /* Alterado de absolute para fixed */
   inset: 20px;
   border: 1px dashed rgba(34, 197, 94, 0.15);
   border-radius: var(--radius-lg);
@@ -3416,11 +3526,15 @@ body {
 }
 .app-admin:has(#admin-login-form:not(.hidden)) .admin-main-content {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
   background: #080b11;
+  overflow-y: auto;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
 }
 .app-admin:has(#admin-login-form:not(.hidden)) .admin-content-inner {
   padding: 0;
@@ -3428,7 +3542,7 @@ body {
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 100%;
+  height: auto;
 }
 
 .login-card-center {
@@ -3541,21 +3655,7 @@ body {
   font-weight: 700;
   letter-spacing: -0.5px;
 }
-
-.main-nav .nav-tab {
-  font-family: var(--font);
-  font-weight: 500;
-  border-radius: var(--radius-full);
-  padding: 0.5rem 1rem;
-  transition: all 0.25s var(--ease-out);
-}
-
-.main-nav .nav-tab.active {
-  background: linear-gradient(135deg, var(--copa-verde), var(--copa-azul));
-  color: #030308;
-  font-weight: 600;
-  box-shadow: 0 4px 15px rgba(0, 255, 135, 0.3);
-}
+/* Removed desktop-specific styles that conflict with dropdown navigation */
 
 /* ─── Redesigned Hero Layout ─── */
 .hero-layout {
@@ -3991,17 +4091,21 @@ canvas#math-particles-canvas {
 
 /* ─── Premium Dashboard Profile Card Layout ─── */
 .user-dashboard-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  margin: 1.5rem 0;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 1.5rem !important;
+  width: 100% !important;
+  max-width: 600px !important;
+  margin: 1.5rem auto !important;
 }
 
-.user-profile-card {
-  width: 100%;
-  max-width: 600px;
+.user-profile-card,
+.user-progress-card {
+  width: 100% !important;
+  max-width: 600px !important;
   padding: 2.25rem !important;
+  box-sizing: border-box !important;
 }
 
 .sports-stats-grid {
@@ -4977,58 +5081,176 @@ html[data-theme="dark"] .theme-icon-moon {
   .brand-name {
     font-size: 1.05rem !important;
   }
+  /* Ocultar subtítulo "Dia da Matemática" na versão mobile */
   .subtitle {
-    font-size: 0.65rem !important;
+    display: none !important;
   }
 
-  /* Shift navigation menu to the bottom of the screen (App-like PWA experience) */
-  .main-nav {
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    width: 100vw !important;
-    max-width: 100vw !important;
-    height: 64px !important;
-    border-radius: 0 !important;
-    border: none !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-    background: rgba(11, 11, 20, 0.95) !important;
-    backdrop-filter: blur(20px) !important;
+  /* Posicionar o container da navegação do lado direito da topbar, antes das ações do usuário */
+  .nav-container {
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: 0.25rem !important;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    z-index: 100 !important;
+  }
+
+  /* Botão de 3 pontinhos no mobile (estilo grande e redondo igual ao botão de trocar tema) */
+  .btn-nav-dropdown {
     display: flex !important;
-    justify-content: space-around !important;
-    align-items: center !important;
-    z-index: 150 !important;
-    padding: 0 6px !important;
-    margin: 0 !important;
-    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.6) !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--text) !important;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+    outline: none;
+    transition: all 0.3s var(--ease-out) !important;
+    transform: none !important;
   }
 
-  .main-nav .nav-tab {
+  .btn-nav-dropdown:hover {
+    background: var(--surface-hover) !important;
+    border-color: var(--accent-2) !important;
+    color: var(--text) !important;
+    transform: scale(1.08) !important;
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.3) !important;
+  }
+
+  .btn-nav-dropdown svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  /* Menu de navegação dropdown na versão mobile */
+  .main-nav {
+    position: absolute !important;
+    top: calc(100% + 0.5rem) !important;
+    right: 0 !important; /* Abre alinhado à direita do botão, evitando estourar a tela */
+    left: auto !important;
+    bottom: auto !important;
+    width: auto !important;
+    height: auto !important;
+    min-width: 190px !important;
     display: flex !important;
     flex-direction: column !important;
+    gap: 0.25rem !important;
+    padding: 6px !important;
+    background: rgba(10, 10, 18, 0.98) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-radius: var(--radius-md) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6) !important;
+    z-index: 150 !important;
+    opacity: 0 !important;
+    transform: translateY(-10px) scale(0.95) !important;
+    transform-origin: top right !important; /* Origem da animação no canto superior direito */
+    pointer-events: none !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    margin: 0 !important;
+  }
+
+  .main-nav.open {
+    opacity: 1 !important;
+    transform: translateY(0) scale(1) !important;
+    pointer-events: auto !important;
+  }
+
+  .main-nav::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* Abas do menu no mobile */
+  .main-nav .nav-tab {
+    display: flex !important;
+    flex-direction: row !important;
     align-items: center !important;
-    justify-content: center !important;
-    font-size: 0.7rem !important;
-    padding: 6px 4px !important;
+    justify-content: flex-start !important;
+    font-size: 0.88rem !important;
+    padding: 10px 14px !important;
     color: var(--text-secondary) !important;
-    flex: 1 !important;
-    border-radius: 0 !important;
+    flex: none !important;
+    border-radius: var(--radius-sm) !important;
     background: transparent !important;
-    gap: 2px !important;
+    gap: 8px !important;
     border: none !important;
+    width: 100% !important;
+    text-align: left !important;
+    font-weight: 500 !important;
+  }
+
+  .main-nav .nav-tab:hover {
+    color: var(--text) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
   }
 
   .main-nav .nav-tab.active {
-    color: var(--copa-amarelo) !important;
-    font-weight: 700 !important;
-    background: transparent !important;
-    border-bottom: 2px solid var(--copa-amarelo) !important;
+    background: linear-gradient(135deg, var(--copa-verde), var(--copa-azul)) !important;
+    color: #030308 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 15px rgba(0, 255, 135, 0.2) !important;
+    border-bottom: none !important;
   }
 
-  /* Ensure body content leaves space for bottom navigation bar */
+  .main-nav .nav-tab-admin-mobile {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    font-size: 0.88rem !important;
+    padding: 10px 14px !important;
+    color: var(--text-secondary) !important;
+    flex: none !important;
+    border-radius: var(--radius-sm) !important;
+    background: transparent !important;
+    gap: 8px !important;
+    border: none !important;
+    width: 100% !important;
+    text-align: left !important;
+    font-weight: 500 !important;
+    text-decoration: none !important;
+  }
+
+  .main-nav .nav-tab-admin-mobile:hover {
+    color: var(--text) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+  }
+
+  /* Suporte ao Tema Claro no Dropdown do Mobile */
+  [data-theme="light"] .btn-nav-dropdown {
+    background: rgba(0, 0, 0, 0.04) !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+    color: var(--text-secondary) !important;
+    box-shadow: none !important;
+  }
+
+  [data-theme="light"] .btn-nav-dropdown:hover {
+    background: rgba(0, 0, 0, 0.08) !important;
+    border-color: rgba(0, 0, 0, 0.15) !important;
+    color: var(--text) !important;
+  }
+
+  [data-theme="light"] .main-nav {
+    background: rgba(255, 255, 255, 0.98) !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  [data-theme="light"] .nav-tab:hover,
+  [data-theme="light"] .nav-tab-admin-mobile:hover {
+    background: rgba(0, 0, 0, 0.04) !important;
+  }
+
+  /* Ajustar padding inferior do container app */
   #app {
-    padding-bottom: 76px !important;
+    padding-bottom: 24px !important;
   }
 
   /* Adjust Hero layouts */
@@ -5126,5 +5348,191 @@ html[data-theme="dark"] .theme-icon-moon {
   /* Hide custom cursor on mobile touchscreens */
   .custom-cursor {
     display: none !important;
+  }
+}
+
+/* ─── Mobile Admin Panel Layout & Interactions Overrides ─── */
+@media (max-width: 768px) {
+  /* Sidebar toggle button (hide on desktop, show on mobile) */
+  .btn-sidebar-toggle {
+    display: flex !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: var(--text-secondary) !important;
+    border-radius: var(--radius-sm) !important;
+    width: 38px !important;
+    height: 38px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    margin-right: 12px !important;
+    outline: none !important;
+    transition: all 0.2s var(--ease-out) !important;
+  }
+
+  .btn-sidebar-toggle:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: var(--text) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+  }
+
+  /* Admin Header adjust on mobile */
+  .admin-header {
+    padding: 10px 14px !important;
+    gap: 8px !important;
+    height: 56px !important;
+  }
+
+  .admin-header h1 {
+    display: none !important;
+  }
+
+  .admin-header .pill-admin {
+    display: none !important; /* Hide to save space */
+  }
+
+  .admin-profile {
+    gap: 4px !important;
+  }
+
+  .profile-avatar {
+    font-size: 1.1rem !important;
+  }
+
+  .profile-name {
+    font-size: 0.75rem !important;
+    max-width: 80px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  /* Main container adjustments */
+  .page-admin #app {
+    flex-direction: column !important;
+  }
+
+  .admin-main-content {
+    width: 100vw !important;
+    height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .admin-main-content .admin-header {
+    flex-shrink: 0 !important;
+  }
+
+  .admin-content-inner {
+    padding: 12px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+    flex: 1 !important;
+  }
+
+  /* Sidebar off-canvas mobile slide-out drawer */
+  .admin-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: -280px !important; /* Offscreen */
+    width: 280px !important;
+    height: 100vh !important;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    transform: translateX(0) !important;
+    z-index: 220 !important;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.6) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background: rgba(10, 14, 22, 0.98) !important;
+    padding: 16px !important;
+    gap: 16px !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .sidebar-logo {
+    gap: 8px !important;
+  }
+
+  .logo-icon {
+    font-size: 1.8rem !important;
+  }
+
+  .sidebar-nav {
+    flex: none !important;
+    gap: 6px !important;
+  }
+
+  .sidebar-footer {
+    margin-top: 16px !important;
+    padding-bottom: 8px !important;
+  }
+
+  /* Chatbot tab layout adjustment on mobile screen */
+  #tab-chatbot .chatbot-container {
+    height: calc(100vh - 140px) !important;
+    max-height: calc(100vh - 140px) !important;
+    border-radius: var(--radius) !important;
+  }
+
+  .admin-sidebar.open {
+    transform: translateX(280px) !important; /* Slide in */
+  }
+
+  /* Overlaybackdrop background shadow */
+  .sidebar-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(4px) !important;
+    z-index: 210 !important;
+    transition: opacity 0.3s ease !important;
+  }
+
+  .sidebar-overlay.hidden {
+    display: none !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+  }
+
+  /* Grids configuration */
+  .admin-grid-top, .admin-grid-middle, .configuracoes-grid, .gestao-layout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .panel-card {
+    padding: 16px !important;
+  }
+
+  /* Double columns and dual lists */
+  .admin-dual-rankings {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .sports-stats-grid, .admin-stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .list-container-scroll {
+    max-height: 220px !important;
+  }
+
+  .minigames-tactical-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  /* Forms element adjustments */
+  .form-stack .floating-field, .form-stack label {
+    width: 100% !important;
+  }
+
+  .cadastro-identity {
+    flex-direction: column !important;
+    gap: 12px !important;
   }
 }

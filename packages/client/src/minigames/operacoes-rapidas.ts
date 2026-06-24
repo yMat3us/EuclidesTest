@@ -105,6 +105,27 @@ export function iniciarOperacoesRapidas(
   let tempoInicioEquacao = Date.now();
   let acertosComBonus = 0;
 
+  // Criar input oculto para suportar teclado virtual em dispositivos móveis
+  const hiddenInput = document.createElement("input");
+  hiddenInput.type = "text";
+  hiddenInput.inputMode = "numeric";
+  hiddenInput.pattern = "[0-9\\-]*";
+  hiddenInput.id = "hidden-game-input";
+  hiddenInput.style.position = "absolute";
+  hiddenInput.style.opacity = "0";
+  hiddenInput.style.pointerEvents = "none";
+  hiddenInput.style.zIndex = "-100";
+  hiddenInput.style.left = "-9999px";
+  hiddenInput.style.top = "-9999px";
+  hiddenInput.style.fontSize = "16px"; // Evita zoom automático no iOS Safari
+  document.getElementById("game-container")?.appendChild(hiddenInput);
+
+  const originalOnFim = onFim;
+  onFim = () => {
+    try { hiddenInput.remove(); } catch (e) {}
+    originalOnFim();
+  };
+
   function proximoProblema(): Problema {
     indiceFila++;
     if (indiceFila >= fila.length) {
@@ -183,7 +204,7 @@ export function iniciarOperacoesRapidas(
         .text(
           width / 2,
           height - 56,
-          `ENTER confirma · novas contas até o fim dos ${DURACAO_SEGUNDOS}s (2 min)`,
+          `Toque na tela para abrir o teclado · ENTER confirma`,
           {
             fontFamily: "Inter, sans-serif",
             fontSize: "14px",
@@ -192,7 +213,60 @@ export function iniciarOperacoesRapidas(
         )
         .setOrigin(0.5);
 
-      this.input.keyboard!.on("keydown", this.onKey, this);
+      // Focar no input oculto ao clicar/tocar na tela
+      this.input.on("pointerdown", () => {
+        hiddenInput.focus();
+      });
+
+      // Tentar focar inicialmente
+      setTimeout(() => {
+        hiddenInput.focus();
+      }, 300);
+
+      // Escutar entrada no input oculto
+      hiddenInput.addEventListener("input", () => {
+        if (finalizado || tempoRestante <= 0) return;
+        let val = hiddenInput.value.replace(/[^0-9\-]/g, "");
+        
+        // Apenas permite um sinal de menos no início
+        if (val.indexOf("-") > 0) {
+          val = val.charAt(0) + val.slice(1).replace(/-/g, "");
+        }
+        
+        if (val.length > 10) val = val.slice(0, 10);
+        hiddenInput.value = val;
+        inputValor = val;
+        this.atualizarUI();
+      });
+
+      hiddenInput.addEventListener("keydown", (event) => {
+        if (finalizado || tempoRestante <= 0) return;
+
+        if (event.key === "Enter") {
+          event.preventDefault();
+          const valor = parseInt(inputValor, 10);
+          if (!Number.isNaN(valor)) {
+            tentativas++;
+            if (valor === problema.resposta) {
+              acertos++;
+              const tempoGasto = (Date.now() - tempoInicioEquacao) / 1000;
+              let mult = 1.0;
+              if (tempoGasto <= 1.5) mult = 1.3;
+              else if (tempoGasto <= 3.0) mult = 1.15;
+              else if (tempoGasto > 6.0) mult = 0.7;
+              acertosComBonus += mult;
+            } else {
+              erros++;
+            }
+            tempoInicioEquacao = Date.now();
+          }
+          inputValor = "";
+          hiddenInput.value = "";
+          problema = proximoProblema();
+          this.atualizarUI();
+        }
+      });
+
       this.atualizarUI();
 
       this.time.addEvent({
@@ -205,44 +279,6 @@ export function iniciarOperacoesRapidas(
           if (tempoRestante <= 0) void this.finalizar();
         },
       });
-    }
-
-    onKey(event: KeyboardEvent) {
-      if (finalizado || tempoRestante <= 0) return;
-
-      if (event.key === "Enter") {
-        const valor = parseInt(inputValor, 10);
-        if (!Number.isNaN(valor)) {
-          tentativas++;
-          if (valor === problema.resposta) {
-            acertos++;
-            const tempoGasto = (Date.now() - tempoInicioEquacao) / 1000;
-            let mult = 1.0;
-            if (tempoGasto <= 1.5) mult = 1.3;
-            else if (tempoGasto <= 3.0) mult = 1.15;
-            else if (tempoGasto > 6.0) mult = 0.7;
-            acertosComBonus += mult;
-          } else {
-            erros++;
-          }
-          tempoInicioEquacao = Date.now();
-        }
-        inputValor = "";
-        problema = proximoProblema();
-        this.atualizarUI();
-        return;
-      }
-
-      if (event.key === "Backspace") {
-        inputValor = inputValor.slice(0, -1);
-        this.atualizarUI();
-        return;
-      }
-
-      if (/^[0-9\-]$/.test(event.key) && inputValor.length < 10) {
-        inputValor += event.key;
-        this.atualizarUI();
-      }
     }
 
     atualizarUI() {
@@ -258,7 +294,7 @@ export function iniciarOperacoesRapidas(
     async finalizar() {
       if (finalizado) return;
       finalizado = true;
-      this.input.keyboard?.off("keydown", this.onKey, this);
+      try { hiddenInput.remove(); } catch (e) {}
       protecao.encerrar();
 
       const duracaoMs = Date.now() - inicio;

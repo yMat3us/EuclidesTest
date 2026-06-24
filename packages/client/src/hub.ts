@@ -454,6 +454,35 @@ export async function initHub(onPlay: IniciarMinigame) {
     });
   });
 
+  // Wire up desktop navigation dropdown toggle & close behaviors
+  const btnNavDropdown = document.getElementById("btn-nav-dropdown");
+  const mainNav = document.querySelector(".main-nav");
+
+  if (btnNavDropdown && mainNav) {
+    btnNavDropdown.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = mainNav.classList.toggle("open");
+      btnNavDropdown.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    // Close dropdown when any item is clicked
+    mainNav.querySelectorAll(".nav-tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        mainNav.classList.remove("open");
+        btnNavDropdown.setAttribute("aria-expanded", "false");
+      });
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      if (!btnNavDropdown.contains(target) && !mainNav.contains(target)) {
+        mainNav.classList.remove("open");
+        btnNavDropdown.setAttribute("aria-expanded", "false");
+      }
+    });
+  }
+
   // Wire up Home Go Arena Button
   document.querySelectorAll(".btn-go-arena").forEach((btn) => {
     btn.addEventListener("click", () => {

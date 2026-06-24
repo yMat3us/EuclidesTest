@@ -154,12 +154,16 @@ export async function initAdminPage() {
     }
   });
 
+  const loginHero = document.getElementById("admin-login-hero");
+
   function showDashboard() {
+    if (loginHero) loginHero.classList.add("hidden");
     loginForm.classList.add("hidden");
     dashboard.classList.remove("hidden");
   }
 
   function showLogin() {
+    if (loginHero) loginHero.classList.remove("hidden");
     loginForm.classList.remove("hidden");
     dashboard.classList.add("hidden");
   }
@@ -200,6 +204,29 @@ export async function initAdminPage() {
     loginForm.reset();
     showLogin();
   });
+
+  // Mobile sidebar toggle interaction
+  const btnSidebarToggle = document.getElementById("btn-sidebar-toggle");
+  const sidebar = document.querySelector(".admin-sidebar");
+  const sidebarOverlay = document.getElementById("sidebar-overlay");
+
+  if (btnSidebarToggle && sidebar && sidebarOverlay) {
+    const toggleSidebar = () => {
+      sidebar.classList.toggle("open");
+      sidebarOverlay.classList.toggle("hidden");
+    };
+
+    btnSidebarToggle.addEventListener("click", toggleSidebar);
+    sidebarOverlay.addEventListener("click", toggleSidebar);
+
+    // Close when clicking a tab
+    sidebar.querySelectorAll(".sidebar-tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        sidebar.classList.remove("open");
+        sidebarOverlay.classList.add("hidden");
+      });
+    });
+  }
 
   document.getElementById("btn-admin-refresh")!.addEventListener("click", () => {
     const t = carregarTokenAdmin();

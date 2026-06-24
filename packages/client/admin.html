@@ -19,6 +19,9 @@
     <canvas id="math-particles-canvas" style="position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1; opacity: 0.95;"></canvas>
 
     <div id="app" class="app-admin">
+      <!-- Sidebar Mobile Backdrop Overlay -->
+      <div id="sidebar-overlay" class="sidebar-overlay hidden"></div>
+
       <!-- SIDEBAR -->
       <aside class="admin-sidebar glass">
         <div class="sidebar-logo">
@@ -37,6 +40,9 @@
           <button type="button" class="sidebar-tab" data-tab="tab-configuracoes">
             <span class="tab-icon">⚙️</span> CONFIGURAÇÕES
           </button>
+          <button type="button" class="sidebar-tab" data-tab="tab-chatbot">
+            <span class="tab-icon">🤖</span> CHATBOT IA
+          </button>
         </nav>
         <div class="sidebar-footer" style="display: flex; flex-direction: column; gap: 8px;">
           <a href="/" class="btn ghost btn-sm w-full" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; height: 36px; box-sizing: border-box;">← Voltar para Arena</a>
@@ -49,6 +55,13 @@
         <!-- HEADER -->
         <header class="admin-header glass">
           <div class="header-left">
+            <button type="button" id="btn-sidebar-toggle" class="btn-sidebar-toggle" aria-label="Abrir Menu">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
+            </button>
             <span class="pill pill-admin">Acesso restrito</span>
             <h1>CONTROLE DE EVENTOS & RANKINGS</h1>
           </div>
@@ -62,42 +75,63 @@
 
         <!-- CONTENT PANEL -->
         <div class="admin-content-inner">
-          <!-- LOGIN FORM (Centers automatically if login form is not hidden) -->
-          <div class="panel glass-card admin-card login-card-center" id="admin-panel">
-            <form id="admin-login-form" class="admin-login form-stack">
-              <div class="panel-head" style="text-align: center; margin-bottom: 24px;">
-                <span class="pill pill-admin" style="margin: 0 auto 12px;">Acesso restrito</span>
-                <h2>Controle do Evento</h2>
-                <p class="muted">Entre com suas credenciais de administrador</p>
+          <!-- LOGIN FORM WRAPPER (Centers automatically if login form is not hidden) -->
+          <div class="panel admin-card" id="admin-panel">
+            <div id="admin-login-hero" class="hero-layout">
+              <!-- Left: Description and stats -->
+              <div class="hero-copy animate-in">
+                <span class="pill pill-admin">Painel ETE Isaac PE</span>
+                <h2 class="hero-title">
+                  Controle do<br />
+                  <span class="gradient-text">Administrador</span>
+                </h2>
+                <p class="hero-desc">
+                  Gerencie a apresentação de slides no projetor, libere os minigames da Arena e acompanhe os rankings em tempo real dos alunos.
+                </p>
+                <ul class="hero-stats">
+                  <li><strong>Slide</strong><span>Controle</span></li>
+                  <li><strong>Live</strong><span>Rankings</span></li>
+                  <li><strong>SQLite</strong><span>Database</span></li>
+                </ul>
               </div>
-              <label class="field">
-                <span>Administrador</span>
-                <div class="select-wrap">
-                  <select name="adminName" id="login-admin-name" required>
-                    <option value="" disabled selected>Selecione seu nome</option>
-                    <option value="Plinyl">Plinyl</option>
-                    <option value="Alisson">Alisson</option>
-                    <option value="Rikelmy">Rikelmy</option>
-                    <option value="Lucas">Lucas</option>
-                    <option value="Marcelo">Marcelo</option>
-                  </select>
-                  <span class="select-chevron" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
-                      <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                  </span>
-                </div>
-              </label>
-              <label class="field">
-                <span>Senha</span>
-                <input name="token" type="password" required autocomplete="off" placeholder="••••••••" />
-              </label>
-              <button type="submit" class="btn primary btn-glow">Entrar</button>
-              <a href="/" class="btn ghost btn-sm w-full" style="text-align: center; margin-top: 12px; text-decoration: none; display: flex; align-items: center; justify-content: center; height: 36px; box-sizing: border-box;">← Voltar para Arena</a>
-            </form>
 
-            <p id="admin-loading" class="admin-msg muted hidden">Carregando...</p>
-            <p id="admin-msg" class="admin-msg muted"></p>
+              <!-- Right: Form Box -->
+              <div class="glass-card login-card animate-in delay-1">
+                <div class="panel-head">
+                  <h2>Controle do Evento</h2>
+                  <p class="muted">Entre com suas credenciais</p>
+                </div>
+                <form id="admin-login-form" class="admin-login form-stack">
+                  <label class="field">
+                    <span class="field-label">Administrador</span>
+                    <div class="select-wrap">
+                      <select name="adminName" id="login-admin-name" required>
+                        <option value="" disabled selected>Selecione seu nome</option>
+                        <option value="Plinyl">Plinyl</option>
+                        <option value="Alisson">Alisson</option>
+                        <option value="Rikelmy">Rikelmy</option>
+                        <option value="Lucas">Lucas</option>
+                        <option value="Marcelo">Marcelo</option>
+                      </select>
+                      <span class="select-chevron" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+                          <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                      </span>
+                    </div>
+                  </label>
+                  <label class="field">
+                    <span class="field-label">Senha</span>
+                    <input name="token" type="password" required autocomplete="off" placeholder="••••••••" />
+                  </label>
+                  <button type="submit" class="btn primary btn-glow">Entrar</button>
+                  <a href="/" class="btn ghost btn-sm w-full" style="text-align: center; margin-top: 12px; text-decoration: none; display: flex; align-items: center; justify-content: center; height: 36px; box-sizing: border-box;">← Voltar para Arena</a>
+                </form>
+
+                <p id="admin-loading" class="admin-msg muted hidden" style="margin-top: 12px; text-align: center;">Carregando...</p>
+                <p id="admin-msg" class="admin-msg muted" style="margin-top: 12px; text-align: center;"></p>
+              </div>
+            </div>
 
             <!-- DASHBOARD -->
             <div id="admin-dashboard" class="hidden">
@@ -288,6 +322,49 @@
                 </div>
               </div>
 
+              <!-- TAB 4: CHATBOT IA -->
+              <div id="tab-chatbot" class="tab-panel-content hidden">
+                <div class="chatbot-container glass-card" id="admin-chatbot">
+                  <div class="chatbot-header" id="chatbot-header">
+                    <div class="chatbot-avatar-wrap">
+                      <span class="chatbot-avatar-icon">🤖</span>
+                      <div class="chatbot-status-dot"></div>
+                    </div>
+                    <div class="chatbot-info">
+                      <h4 id="chatbot-assistant-name">EuclidesAI</h4>
+                      <span class="chatbot-status-text">Assistente Ativo</span>
+                    </div>
+                    <button type="button" id="btn-chatbot-toggle" class="btn ghost btn-sm btn-icon" aria-label="Minimizar chat">
+                      <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
+                        <path d="M19 13H5v-2h14v2z" fill="currentColor"/>
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="chatbot-body" id="chatbot-body">
+                    <div class="chatbot-messages" id="chatbot-messages"></div>
+                  </div>
+                  <form id="chatbot-input-form" class="chatbot-input-form">
+                    <input
+                      type="text"
+                      id="chatbot-input"
+                      placeholder="Perguntar ao assistente..."
+                      required
+                      autocomplete="off"
+                    />
+                    <button type="submit" class="btn primary btn-sm btn-send" aria-label="Enviar">
+                      <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="currentColor"/>
+                      </svg>
+                    </button>
+                  </form>
+                  <div class="chatbot-shortcuts">
+                    <button type="button" class="btn ghost btn-xs chat-shortcut" data-cmd="iniciar rodada">Iniciar Rodada</button>
+                    <button type="button" class="btn ghost btn-xs chat-shortcut" data-cmd="status">Status</button>
+                    <button type="button" class="btn ghost btn-xs chat-shortcut" data-cmd="limpar rodada">Zerar Apres.</button>
+                  </div>
+                </div>
+              </div>
+
               <!-- HIDDEN/FALLBACK ACTIONS SO ORIGINAL SCRIPT STAYS VALID -->
               <div style="display: none !important;">
                 <button type="button" id="btn-admin-logout">Sair</button>
@@ -296,47 +373,6 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Chatbot Assistente AI Canva-Style -->
-    <div id="admin-chatbot" class="chatbot-container glass-card hidden">
-      <div class="chatbot-header" id="chatbot-header">
-        <div class="chatbot-avatar-wrap">
-          <span class="chatbot-avatar-icon">🤖</span>
-          <div class="chatbot-status-dot"></div>
-        </div>
-        <div class="chatbot-info">
-          <h4 id="chatbot-assistant-name">EuclidesAI</h4>
-          <span class="chatbot-status-text">Assistente Ativo</span>
-        </div>
-        <button type="button" id="btn-chatbot-toggle" class="btn ghost btn-sm btn-icon" aria-label="Minimizar chat">
-          <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
-            <path d="M19 13H5v-2h14v2z" fill="currentColor"/>
-          </svg>
-        </button>
-      </div>
-      <div class="chatbot-body" id="chatbot-body">
-        <div class="chatbot-messages" id="chatbot-messages"></div>
-      </div>
-      <form id="chatbot-input-form" class="chatbot-input-form">
-        <input
-          type="text"
-          id="chatbot-input"
-          placeholder="Perguntar ao assistente..."
-          required
-          autocomplete="off"
-        />
-        <button type="submit" class="btn primary btn-sm btn-send" aria-label="Enviar">
-          <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
-            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="currentColor"/>
-          </svg>
-        </button>
-      </form>
-      <div class="chatbot-shortcuts">
-        <button type="button" class="btn ghost btn-xs chat-shortcut" data-cmd="iniciar rodada">Iniciar Rodada</button>
-        <button type="button" class="btn ghost btn-xs chat-shortcut" data-cmd="status">Status</button>
-        <button type="button" class="btn ghost btn-xs chat-shortcut" data-cmd="limpar rodada">Zerar Apres.</button>
       </div>
     </div>
 

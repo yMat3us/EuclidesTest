@@ -67,11 +67,22 @@
           </div>
         </a>
 
-        <nav class="main-nav">
-          <button type="button" class="nav-tab active" data-view="home">🏠 Início</button>
-          <button type="button" class="nav-tab" data-view="grupo">🇧🇷 Sobre o Grupo</button>
-          <button type="button" class="nav-tab" id="nav-tab-arena" data-view="login">🏆 Arena Competitiva</button>
-        </nav>
+        <!-- Container de navegação (Dropdown no desktop, barra inferior no mobile) -->
+        <div class="nav-container">
+          <button type="button" id="btn-nav-dropdown" class="btn-nav-dropdown" aria-label="Menu de Navegação" aria-expanded="false" aria-haspopup="true">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <circle cx="12" cy="5" r="2" />
+              <circle cx="12" cy="12" r="2" />
+              <circle cx="12" cy="19" r="2" />
+            </svg>
+          </button>
+          <nav class="main-nav">
+            <button type="button" class="nav-tab active" data-view="home">🏠 Início</button>
+            <button type="button" class="nav-tab" data-view="grupo">🇧🇷 Sobre o Grupo</button>
+            <button type="button" class="nav-tab" id="nav-tab-arena" data-view="login">🏆 Arena Competitiva</button>
+            <a href="/admin.html" class="nav-tab-admin-mobile">⚙️ Painel Admin</a>
+          </nav>
+        </div>
 
         <nav class="topbar-actions">
           <button type="button" id="btn-theme-toggle" class="btn-theme-toggle" aria-label="Alternar Tema">

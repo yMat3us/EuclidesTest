@@ -34,6 +34,7 @@ export function agendarVoltaArena(
 let lastActionTime = Date.now();
 let multipliers: number[] = [];
 let speedBarIntervalId: any = null;
+let speedBarFrozen = false;
 
 export interface MinigameUi {
   setTimer: (text: string) => void;
@@ -41,6 +42,7 @@ export interface MinigameUi {
   setFeedback: (text: string, tipo?: "ok" | "erro" | "") => void;
   setStatus: (text: string) => void;
   cleanup?: () => void;
+  resetSpeedBar?: () => void;
   body: HTMLElement;
   feedback: HTMLElement;
 }
@@ -57,6 +59,7 @@ export function montarShell(
 
   lastActionTime = Date.now();
   multipliers = [];
+  speedBarFrozen = false;
 
   container.innerHTML = `
     <div class="mg-shell glass-card">
@@ -95,6 +98,7 @@ export function montarShell(
   let currentMultiplier = 1.3;
 
   speedBarIntervalId = setInterval(() => {
+    if (speedBarFrozen) return;
     const elapsed = Date.now() - lastActionTime;
     const pct = Math.max(0, 100 - (elapsed / 8000) * 100);
     if (speedBarEl) speedBarEl.style.width = `${pct}%`;
@@ -138,7 +142,7 @@ export function montarShell(
       const isOptionBtn = target.closest(".options-grid button, .mg-opcoes button, .select-option-btn, .mg-memory-card");
       if (isOptionBtn && !(isOptionBtn as HTMLButtonElement).disabled) {
         multipliers.push(currentMultiplier);
-        lastActionTime = Date.now(); // reset speed bar for next question
+        speedBarFrozen = true;
       }
     });
   }
@@ -154,6 +158,10 @@ export function montarShell(
     body: document.getElementById("mg-body")!,
     feedback,
     cleanup,
+    resetSpeedBar: () => {
+      lastActionTime = Date.now();
+      speedBarFrozen = false;
+    },
     setTimer: (text) => {
       const textEl = document.getElementById("mg-timer-text");
       if (textEl) textEl.textContent = text;

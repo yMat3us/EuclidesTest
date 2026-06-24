@@ -10,6 +10,7 @@ import { iniciarSequenciaLogica } from "./minigames/sequencia-logica.js";
 import { iniciarFracoesVisual } from "./minigames/fracoes-visual.js";
 import { iniciarLogica } from "./minigames/logica.js";
 import { iniciarCopa } from "./minigames/copa.js";
+import { iniciarFormulasMatematicas } from "./minigames/formulas-matematicas.js";
 import type { Jogador } from "./services/api.js";
 import { buscarRodadaAtual, iniciarPartida } from "./services/api.js";
 import {
@@ -40,9 +41,24 @@ const MINIGAMES: Record<string, IniciarJogo> = {
   "fracoes-visual": iniciarFracoesVisual as unknown as IniciarJogo,
   "logica": iniciarLogica as unknown as IniciarJogo,
   "copa": iniciarCopa as unknown as IniciarJogo,
+  "formulas-matematicas": iniciarFormulasMatematicas as unknown as IniciarJogo,
 };
 
+/**
+ * Função de inicialização principal (Bootstrap) da aplicação.
+ * Inicializa efeitos visuais (partículas, tema, animações), registra o Service Worker
+ * do PWA, oculta a tela de carregamento e inicializa o Hub principal do jogo.
+ */
 async function bootstrap() {
+  // Register Service Worker for PWA mobile installability
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("/sw.js")
+        .then(reg => console.log("Service Worker registrado com sucesso:", reg))
+        .catch(err => console.error("Erro ao registrar Service Worker:", err));
+    });
+  }
+
   initThemeToggle();
   initParallax();
   initScrollAnimation();

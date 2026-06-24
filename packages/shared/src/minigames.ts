@@ -125,6 +125,17 @@ export const MINIGAMES: MinigameMeta[] = [
     fase: 1,
     implementado: true,
   },
+  {
+    id: "formulas-matematicas",
+    nome: "Fórmulas & Assuntos",
+    descricao: "Identifique a qual assunto pertence cada fórmula matemática ilustrada por IA.",
+    tema: "algebra",
+    pontuacaoMaxima: 500,
+    duracaoSegundos: 90,
+    dificuldade: "medio",
+    fase: 1,
+    implementado: true,
+  },
 ];
 
 export function getMinigame(id: string): MinigameMeta | undefined {

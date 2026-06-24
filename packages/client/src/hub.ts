@@ -10,10 +10,56 @@ import {
   listarMinigames,
   logoutJogador,
   registrarJogador,
+  salvarAvatarJogador,
 } from "./services/api.js";
 import { carregarJogador, limparJogador, salvarJogador } from "./services/session.js";
 
 export type IniciarMinigame = (id: string) => void;
+
+export const CONQUISTAS_DEFINICAO = [
+  { id: "aprendiz", nome: "Aprendiz", categoria: "Iniciante", nivel: 1 },
+  { id: "estudante", nome: "Estudante", categoria: "Iniciante", nivel: 2 },
+  { id: "novato-numeros", nome: "Novato dos Números", categoria: "Iniciante", nivel: 3 },
+  { id: "explorador-numeros", nome: "Explorador dos Números", categoria: "Iniciante", nivel: 4 },
+
+  { id: "matematico", nome: "Matemático", categoria: "Intermediário", nivel: 5 },
+  { id: "analista", nome: "Analista", categoria: "Intermediário", nivel: 6 },
+  { id: "mestre-contas", nome: "Mestre das Contas", categoria: "Intermediário", nivel: 7 },
+  { id: "resolutor-problemas", nome: "Resolutor de Problemas", categoria: "Intermediário", nivel: 8 },
+
+  { id: "estrategista-matematico", nome: "Estrategista Matemático", categoria: "Avançado", nivel: 9 },
+  { id: "genio-numeros", nome: "Gênio dos Números", categoria: "Avançado", nivel: 10 },
+  { id: "mestre-algebra", nome: "Mestre da Álgebra", categoria: "Avançado", nivel: 11 },
+  { id: "arquiteto-logica", nome: "Arquiteto da Lógica", categoria: "Avançado", nivel: 12 },
+
+  { id: "lenda-matematica", nome: "Lenda Matemática", categoria: "Elite", nivel: 13 },
+  { id: "supremo-calculista", nome: "Supremo Calculista", categoria: "Elite", nivel: 14 },
+  { id: "guardiao-numeros", nome: "Guardião dos Números", categoria: "Elite", nivel: 15 },
+  { id: "mestre-supremo", nome: "Mestre Supremo", categoria: "Elite", nivel: 16 },
+
+  { id: "einstein-supremo", nome: "Einstein Supremo", categoria: "Especial", nivel: 17 },
+  { id: "deus-numeros", nome: "Deus dos Números", categoria: "Especial", nivel: 18 },
+  { id: "hacker-matematica", nome: "Hacker da Matemática", categoria: "Especial", nivel: 19 },
+  { id: "lenda-viva", nome: "Lenda Viva", categoria: "Especial", nivel: 20 },
+];
+
+export function obterNivelPorXp(xp: number): number {
+  let level = 1;
+  while (true) {
+    const xpReq = Math.round(100 * Math.pow(level + 1, 2.2));
+    if (xp >= xpReq) {
+      level++;
+    } else {
+      break;
+    }
+  }
+  return level;
+}
+
+export function obterXpNecessarioParaNivel(level: number): number {
+  if (level <= 1) return 0;
+  return Math.round(100 * Math.pow(level, 2.2));
+}
 
 export async function initHub(onPlay: IniciarMinigame) {
   const playerBadge = document.getElementById("player-badge")!;
@@ -30,18 +76,34 @@ export async function initHub(onPlay: IniciarMinigame) {
     }
     playerBadge.classList.remove("hidden");
     playerName.textContent = jogador.apelido.split(" ")[0];
-    initialEl.textContent = jogador.apelido.charAt(0).toUpperCase();
+    if (jogador.avatar) {
+      initialEl.innerHTML = `<img src="${jogador.avatar}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" />`;
+    } else {
+      initialEl.textContent = jogador.apelido.charAt(0).toUpperCase();
+    }
   }
 
   async function refreshArena() {
-    if (!jogador) return;
+    const currentJogador = jogador;
+    if (!currentJogador) return;
     try {
       const [{ minigames, pontuacaoTotalPossivel }, perfil, rodadaStatus] =
         await Promise.all([
           listarMinigames(),
-          buscarJogador(jogador.id),
+          buscarJogador(currentJogador.id),
           buscarRodadaAtual(),
         ]);
+
+      if (perfil?.jogador) {
+        jogador = {
+          ...currentJogador,
+          ...perfil.jogador,
+        };
+        salvarJogador(jogador);
+        renderPlayerBadge();
+      }
+
+      const activeJogador = jogador || currentJogador;
 
       const global = perfil?.totalGlobal ?? perfil?.total ?? 0;
       const rodada = perfil?.totalRodada ?? 0;
@@ -54,9 +116,66 @@ export async function initHub(onPlay: IniciarMinigame) {
         : 0;
       const progressoPct = Math.round((partidas / 10) * 100); // 10 total minigames in system
 
-      document.getElementById("dash-username")!.textContent = jogador.apelido;
-      document.getElementById("dash-class")!.textContent = jogador.turma ? jogador.turma : "Professor";
-      document.getElementById("dash-avatar")!.textContent = jogador.apelido.charAt(0).toUpperCase();
+      document.getElementById("dash-username")!.textContent = activeJogador.apelido;
+      document.getElementById("dash-class")!.textContent = activeJogador.turma ? activeJogador.turma : "Professor";
+      
+      const dashAvatarEl = document.getElementById("dash-avatar");
+      if (dashAvatarEl) {
+        dashAvatarEl.textContent = activeJogador.apelido.charAt(0).toUpperCase();
+      }
+
+      const dashAvatarImg = document.getElementById("dash-avatar-img") as HTMLImageElement | null;
+      if (dashAvatarImg) {
+        dashAvatarImg.src = activeJogador.avatar || "/avatar_einstein.jpg";
+      }
+
+      // XP & Level calculations
+      const xp = activeJogador.xp ?? 0;
+      const nivel = obterNivelPorXp(xp);
+      const xpMin = obterXpNecessarioParaNivel(nivel);
+      const xpMax = obterXpNecessarioParaNivel(nivel + 1);
+      const currentXpInLevel = xp - xpMin;
+      const xpRequiredForNextLevel = xpMax - xpMin;
+      const xpPct = xpRequiredForNextLevel > 0 
+        ? Math.min(100, Math.max(0, Math.round((currentXpInLevel / xpRequiredForNextLevel) * 100)))
+        : 0;
+
+      const dashLevelEl = document.getElementById("dash-level");
+      if (dashLevelEl) dashLevelEl.textContent = `Nível ${nivel}`;
+
+      const dashXpEl = document.getElementById("dash-xp");
+      if (dashXpEl) dashXpEl.textContent = `${xp} / ${xpMax} XP`;
+
+      const dashXpBarEl = document.getElementById("dash-xp-bar");
+      if (dashXpBarEl) dashXpBarEl.style.width = `${xpPct}%`;
+
+      // Render Achievements list
+      const conquistasListEl = document.getElementById("dash-conquistas-list");
+      if (conquistasListEl) {
+        conquistasListEl.innerHTML = "";
+        const conquistasJogador = activeJogador.conquistas || [];
+        if (conquistasJogador.length === 0) {
+          conquistasListEl.innerHTML = `<span class="muted text-xs">Nenhuma conquista desbloqueada.</span>`;
+        } else {
+          CONQUISTAS_DEFINICAO.forEach((c) => {
+            if (conquistasJogador.includes(c.id)) {
+              let badgeStyle = "";
+              if (c.categoria === "Iniciante") badgeStyle = "background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff;";
+              else if (c.categoria === "Intermediário") badgeStyle = "background: linear-gradient(135deg, #10b981, #047857); color: #fff;";
+              else if (c.categoria === "Avançado") badgeStyle = "background: linear-gradient(135deg, #f59e0b, #b45309); color: #fff;";
+              else if (c.categoria === "Elite") badgeStyle = "background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff;";
+              else badgeStyle = "background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: #fff; box-shadow: 0 0 10px rgba(139, 92, 246, 0.5); border: 1px solid #c084fc;";
+
+              const badge = document.createElement("span");
+              badge.className = "pill badge-achievement animate-pop";
+              badge.style.cssText = `padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; white-space: nowrap; ${badgeStyle}`;
+              badge.textContent = `🏆 ${c.nome}`;
+              badge.title = `${c.categoria} (Nível ${c.nivel})`;
+              conquistasListEl.appendChild(badge);
+            }
+          });
+        }
+      }
 
       document.getElementById("stat-gols")!.textContent = String(gols);
       document.getElementById("stat-partidas")!.textContent = `${partidas}/10`;
@@ -359,9 +478,61 @@ export async function initHub(onPlay: IniciarMinigame) {
     });
   });
 
+  // Avatar Modal Handlers
+  const btnChangeAvatar = document.getElementById("btn-change-avatar");
+  const modalSelecionarAvatar = document.getElementById("modal-selecionar-avatar");
+  const btnCancelarAvatar = document.getElementById("btn-cancelar-avatar");
+  const avatarOptions = document.querySelectorAll(".avatar-option");
 
+  if (btnChangeAvatar && modalSelecionarAvatar) {
+    btnChangeAvatar.addEventListener("click", () => {
+      const currentAvatar = jogador?.avatar || "/avatar_einstein.jpg";
+      avatarOptions.forEach((opt) => {
+        const img = opt.querySelector("img");
+        const path = (opt as HTMLElement).dataset.avatar;
+        if (img && path) {
+          if (path === currentAvatar) {
+            img.style.borderColor = "var(--copa-verde)";
+            img.style.boxShadow = "0 0 10px rgba(0, 255, 128, 0.5)";
+          } else {
+            img.style.borderColor = "transparent";
+            img.style.boxShadow = "none";
+          }
+        }
+      });
+      modalSelecionarAvatar.classList.remove("hidden");
+    });
+  }
 
+  if (btnCancelarAvatar && modalSelecionarAvatar) {
+    btnCancelarAvatar.addEventListener("click", () => {
+      modalSelecionarAvatar.classList.add("hidden");
+    });
+  }
 
+  avatarOptions.forEach((opt) => {
+    opt.addEventListener("click", async () => {
+      if (!jogador) return;
+      const avatarPath = (opt as HTMLElement).dataset.avatar || null;
+      try {
+        await salvarAvatarJogador(jogador.id, avatarPath);
+        jogador.avatar = avatarPath;
+        salvarJogador(jogador);
+        renderPlayerBadge();
+        
+        const dashAvatarImg = document.getElementById("dash-avatar-img") as HTMLImageElement | null;
+        if (dashAvatarImg) {
+          dashAvatarImg.src = avatarPath || "/avatar_einstein.jpg";
+        }
+        
+        if (modalSelecionarAvatar) {
+          modalSelecionarAvatar.classList.add("hidden");
+        }
+      } catch (err) {
+        alert(err instanceof Error ? err.message : "Erro ao salvar avatar");
+      }
+    });
+  });
 
   // Iniciar sempre na Página Inicial (Home)
   showView("home");
@@ -574,7 +745,7 @@ function preencherListaTurmas(
 
 function preencherLista(
   list: HTMLElement,
-  ranking: { apelido: string; turma: string | null; total: number }[],
+  ranking: { apelido: string; turma: string | null; total: number; avatar?: string | null }[],
   vazio = "Nenhum jogador no pódio ainda. Seja o primeiro!",
 ) {
   const podium3d = document.getElementById("podium-3d")!;
@@ -596,9 +767,13 @@ function preencherLista(
   // Renderiza 2º Lugar (Esquerda)
   if (p2) {
     const nomeCurto = p2.apelido.split(" ")[0];
+    const avatarImg = p2.avatar
+      ? `<img src="${p2.avatar}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #ccc; margin-bottom: 4px;" />`
+      : `<span style="font-size: 1.5rem; margin-bottom: 4px; display: inline-block;">👤</span>`;
     podium3d.innerHTML += `
       <div class="podium-col col-2">
         <div class="podium-player">
+          ${avatarImg}
           <span class="podium-name">${nomeCurto}</span>
           <span class="podium-turma">${p2.turma ? p2.turma : "Professor"}</span>
           <span class="podium-score">${p2.total} pts</span>
@@ -615,10 +790,14 @@ function preencherLista(
   // Renderiza 1º Lugar (Centro)
   if (p1) {
     const nomeCurto = p1.apelido.split(" ")[0];
+    const avatarImg = p1.avatar
+      ? `<img src="${p1.avatar}" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid #ffd700; margin-bottom: 4px; box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);" />`
+      : `<span style="font-size: 1.8rem; margin-bottom: 4px; display: inline-block;">👤</span>`;
     podium3d.innerHTML += `
       <div class="podium-col col-1">
         <div class="podium-crown">👑</div>
         <div class="podium-player">
+          ${avatarImg}
           <span class="podium-name">${nomeCurto}</span>
           <span class="podium-turma">${p1.turma ? p1.turma : "Professor"}</span>
           <span class="podium-score">${p1.total} pts</span>
@@ -633,9 +812,13 @@ function preencherLista(
   // Renderiza 3º Lugar (Direita)
   if (p3) {
     const nomeCurto = p3.apelido.split(" ")[0];
+    const avatarImg = p3.avatar
+      ? `<img src="${p3.avatar}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #cd7f32; margin-bottom: 4px;" />`
+      : `<span style="font-size: 1.5rem; margin-bottom: 4px; display: inline-block;">👤</span>`;
     podium3d.innerHTML += `
       <div class="podium-col col-3">
         <div class="podium-player">
+          ${avatarImg}
           <span class="podium-name">${nomeCurto}</span>
           <span class="podium-turma">${p3.turma ? p3.turma : "Professor"}</span>
           <span class="podium-score">${p3.total} pts</span>
@@ -660,14 +843,20 @@ function preencherLista(
     const trendClass = `trend-${trend}`;
     const maxPoints = ranking[0]?.total || 1;
     const pct = Math.min(100, Math.max(5, Math.round((r.total / maxPoints) * 100)));
+    const avatarImg = r.avatar
+      ? `<img src="${r.avatar}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.2);" />`
+      : `<span style="font-size: 1.2rem;">👤</span>`;
 
     li.innerHTML = `
       <span class="pos-badge">#${i + 4}</span>
-      <div class="rank-info">
-        <span class="rank-name">${r.apelido}</span>
-        <span class="rank-subtext">${r.turma ? r.turma : "Professor"}</span>
-        <div class="rank-progress-track">
-          <div class="rank-progress-fill" style="width: ${pct}%"></div>
+      <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+        ${avatarImg}
+        <div class="rank-info" style="flex: 1;">
+          <span class="rank-name">${r.apelido}</span>
+          <span class="rank-subtext">${r.turma ? r.turma : "Professor"}</span>
+          <div class="rank-progress-track">
+            <div class="rank-progress-fill" style="width: ${pct}%"></div>
+          </div>
         </div>
       </div>
       <div class="rank-trend-box ${trendClass}" title="Tendência de posição">

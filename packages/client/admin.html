@@ -393,6 +393,41 @@
       </div>
     </div>
 
+    <!-- MODAL AJUSTAR XP -->
+    <div id="modal-ajustar-xp" class="modal hidden">
+      <div class="modal-content glass-card">
+        <h3>Ajustar XP de <span id="modal-xp-jogador-nome"></span></h3>
+        <form id="form-ajustar-xp" class="form-stack">
+          <input type="hidden" id="modal-xp-jogador-id" />
+          <label class="field">
+            <span>Definir XP Exato</span>
+            <input type="number" id="modal-xp-valor" required min="0" max="1000000" placeholder="Ex: 1500" />
+          </label>
+          <div class="modal-actions" style="margin-top: 16px; display: flex; gap: 8px; justify-content: flex-end;">
+            <button type="submit" class="btn primary">Confirmar</button>
+            <button type="button" id="btn-modal-xp-cancelar" class="btn ghost">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL AJUSTAR CONQUISTAS -->
+    <div id="modal-ajustar-conquistas" class="modal hidden">
+      <div class="modal-content glass-card" style="max-width: 600px;">
+        <h3>Gerenciar Conquistas de <span id="modal-conquistas-jogador-nome"></span></h3>
+        <form id="form-ajustar-conquistas" class="form-stack">
+          <input type="hidden" id="modal-conquistas-jogador-id" />
+          <div id="modal-conquistas-list-container" style="max-height: 350px; overflow-y: auto; margin-bottom: 16px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+            <!-- Checkboxes of achievements go here -->
+          </div>
+          <div class="modal-actions" style="display: flex; gap: 8px; justify-content: flex-end;">
+            <button type="submit" class="btn primary">Salvar Alterações</button>
+            <button type="button" id="btn-modal-conquistas-cancelar" class="btn ghost">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <!-- JS TABS & SIDEBAR LOGIC -->
     <script>
       // Sidebar Tab Switching

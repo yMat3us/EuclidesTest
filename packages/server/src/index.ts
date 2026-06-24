@@ -7,8 +7,8 @@ import { fileURLToPath } from "node:url";
 import { dbPath, initializeMongoAndSync } from "./db/index.js";
 import { registerRoutes } from "./routes.js";
 
-const port = Number(process.env.PORT);
-const host = process.env.HOST;
+const port = process.env.PORT ? Number(process.env.PORT) : 3000;
+const host = process.env.HOST || "0.0.0.0";
 
 const app = Fastify({ logger: true });
 
@@ -41,7 +41,10 @@ app.addHook("onSend", async (request, reply, payload) => {
   void reply.header("X-Frame-Options", "DENY");
   void reply.header("X-XSS-Protection", "1; mode=block");
   void reply.header("Referrer-Policy", "no-referrer");
-  void reply.header("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none';");
+  void reply.header(
+    "Content-Security-Policy",
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; frame-ancestors 'none';"
+  );
   return payload;
 });
 

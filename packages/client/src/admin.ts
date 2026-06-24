@@ -21,12 +21,54 @@ import {
   listarMinigames,
   adminJogadorExcluir,
   adminZerarContadores,
+  adminJogadorSetarXp,
+  adminJogadorSetarConquistas,
 } from "./services/api.js";
 import {
   carregarTokenAdmin,
   limparTokenAdmin,
   salvarTokenAdmin,
 } from "./services/admin-session.js";
+
+function obterNivelPorXp(xp: number): number {
+  let level = 1;
+  while (true) {
+    const xpReq = Math.round(100 * Math.pow(level + 1, 2.2));
+    if (xp >= xpReq) {
+      level++;
+    } else {
+      break;
+    }
+  }
+  return level;
+}
+
+const CONQUISTAS_DEFINICAO = [
+  { id: "aprendiz", nome: "Aprendiz (Iniciante)" },
+  { id: "estudante", nome: "Estudante (Iniciante)" },
+  { id: "novato-numeros", nome: "Novato dos Números (Iniciante)" },
+  { id: "explorador-numeros", nome: "Explorador dos Números (Iniciante)" },
+
+  { id: "matematico", nome: "Matemático (Intermediário)" },
+  { id: "analista", nome: "Analista (Intermediário)" },
+  { id: "mestre-contas", nome: "Mestre das Contas (Intermediário)" },
+  { id: "resolutor-problemas", nome: "Resolutor de Problemas (Intermediário)" },
+
+  { id: "estrategista-matematico", nome: "Estrategista Matemático (Avançado)" },
+  { id: "genio-numeros", nome: "Gênio dos Números (Avançado)" },
+  { id: "mestre-algebra", nome: "Mestre da Álgebra (Avançado)" },
+  { id: "arquiteto-logica", nome: "Arquiteto da Lógica (Avançado)" },
+
+  { id: "lenda-matematica", nome: "Lenda Matemática (Elite)" },
+  { id: "supremo-calculista", nome: "Supremo Calculista (Elite)" },
+  { id: "guardiao-numeros", nome: "Guardião dos Números (Elite)" },
+  { id: "mestre-supremo", nome: "Mestre Supremo (Elite)" },
+
+  { id: "einstein-supremo", nome: "Einstein Supremo (Especial)" },
+  { id: "deus-numeros", nome: "Deus dos Números (Especial)" },
+  { id: "hacker-matematica", nome: "Hacker da Matemática (Especial)" },
+  { id: "lenda-viva", nome: "Lenda Viva (Especial)" },
+];
 
 export async function initAdminPage() {
   const panel = document.getElementById("admin-panel")!;
@@ -458,7 +500,7 @@ export async function initAdminPage() {
             <span class="pill pill-${statusClass}" style="font-size: 0.7rem; padding: 2px 6px; border-radius: var(--radius-sm); font-weight: 500;">${statusText}</span>
           </div>
           <span class="cadastro-meta muted" style="font-size: 0.85rem;">
-            Turma: ${p.turma ?? "—"} | Global: <strong>${p.total_global}</strong> pts | Apres. Atual: <strong>${p.total_rodada}</strong> pts
+            Turma: ${p.turma ?? "—"} | Global: <strong>${p.total_global}</strong> pts | Apres. Atual: <strong>${p.total_rodada}</strong> pts | XP: <strong>${p.xp}</strong> (Lvl <strong>${obterNivelPorXp(p.xp)}</strong>)
           </span>
         </div>
       `;
@@ -477,6 +519,24 @@ export async function initAdminPage() {
         abrirModalAjustarPontos(p.id, p.apelido);
       });
       actions.appendChild(btnAjustar);
+
+      const btnXp = document.createElement("button");
+      btnXp.type = "button";
+      btnXp.className = "btn primary btn-sm";
+      btnXp.textContent = "XP";
+      btnXp.addEventListener("click", () => {
+        abrirModalAjustarXp(p.id, p.apelido, p.xp);
+      });
+      actions.appendChild(btnXp);
+
+      const btnConquistas = document.createElement("button");
+      btnConquistas.type = "button";
+      btnConquistas.className = "btn primary btn-sm";
+      btnConquistas.textContent = "Conquistas";
+      btnConquistas.addEventListener("click", () => {
+        abrirModalAjustarConquistas(p.id, p.apelido, p.conquistas);
+      });
+      actions.appendChild(btnConquistas);
       
       // Botão Expulsar (only if active and not banned)
       if (p.ativo && !p.banido) {
@@ -578,6 +638,120 @@ export async function initAdminPage() {
 
   const btnCancelarPontos = document.getElementById("btn-modal-pontos-cancelar")!;
   btnCancelarPontos.addEventListener("click", fecharModalAjustarPontos);
+
+  // XP MODAL LOGIC
+  function abrirModalAjustarXp(id: string, apelido: string, currentXp: number) {
+    const modal = document.getElementById("modal-ajustar-xp")!;
+    const nomeEl = document.getElementById("modal-xp-jogador-nome")!;
+    const idInput = document.getElementById("modal-xp-jogador-id") as HTMLInputElement;
+    const valorInput = document.getElementById("modal-xp-valor") as HTMLInputElement;
+    
+    nomeEl.textContent = apelido;
+    idInput.value = id;
+    valorInput.value = String(currentXp);
+    
+    modal.classList.remove("hidden");
+  }
+
+  function fecharModalAjustarXp() {
+    const modal = document.getElementById("modal-ajustar-xp")!;
+    modal.classList.add("hidden");
+    const form = document.getElementById("form-ajustar-xp") as HTMLFormElement;
+    form.reset();
+  }
+
+  const formAjustarXp = document.getElementById("form-ajustar-xp") as HTMLFormElement;
+  formAjustarXp.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const token = carregarTokenAdmin();
+    if (!token) return;
+    
+    const id = (document.getElementById("modal-xp-jogador-id") as HTMLInputElement).value;
+    const xp = parseInt((document.getElementById("modal-xp-valor") as HTMLInputElement).value, 10);
+    
+    try {
+      await adminJogadorSetarXp(token, id, xp);
+      fecharModalAjustarXp();
+      await refreshDashboard(token);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Erro ao ajustar XP");
+    }
+  });
+
+  const btnCancelarXp = document.getElementById("btn-modal-xp-cancelar")!;
+  btnCancelarXp.addEventListener("click", fecharModalAjustarXp);
+
+  // CONQUISTAS MODAL LOGIC
+  function abrirModalAjustarConquistas(id: string, apelido: string, conquistasJson: any) {
+    const modal = document.getElementById("modal-ajustar-conquistas")!;
+    const nomeEl = document.getElementById("modal-conquistas-jogador-nome")!;
+    const idInput = document.getElementById("modal-conquistas-jogador-id") as HTMLInputElement;
+    const containerEl = document.getElementById("modal-conquistas-list-container")!;
+    
+    nomeEl.textContent = apelido;
+    idInput.value = id;
+    
+    let conquistasAtuais: string[] = [];
+    try {
+      conquistasAtuais = typeof conquistasJson === 'string' ? JSON.parse(conquistasJson) : (conquistasJson || []);
+    } catch (e) {
+      conquistasAtuais = [];
+    }
+    
+    containerEl.innerHTML = "";
+    CONQUISTAS_DEFINICAO.forEach((c) => {
+      const isChecked = conquistasAtuais.includes(c.id) ? "checked" : "";
+      const div = document.createElement("div");
+      div.style.display = "flex";
+      div.style.alignItems = "center";
+      div.style.gap = "6px";
+      div.style.padding = "4px";
+      div.innerHTML = `
+        <input type="checkbox" id="chk-conq-${c.id}" value="${c.id}" ${isChecked} style="cursor:pointer;" />
+        <label for="chk-conq-${c.id}" style="cursor:pointer; font-size:0.9rem;">${c.nome}</label>
+      `;
+      containerEl.appendChild(div);
+    });
+    
+    modal.classList.remove("hidden");
+  }
+
+  function fecharModalAjustarConquistas() {
+    const modal = document.getElementById("modal-ajustar-conquistas")!;
+    modal.classList.add("hidden");
+    const containerEl = document.getElementById("modal-conquistas-list-container")!;
+    containerEl.innerHTML = "";
+  }
+
+  const formAjustarConquistas = document.getElementById("form-ajustar-conquistas") as HTMLFormElement;
+  formAjustarConquistas.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const token = carregarTokenAdmin();
+    if (!token) return;
+    
+    const id = (document.getElementById("modal-conquistas-jogador-id") as HTMLInputElement).value;
+    const containerEl = document.getElementById("modal-conquistas-list-container")!;
+    const checkboxes = containerEl.querySelectorAll("input[type='checkbox']");
+    const conquistasSelecionadas: string[] = [];
+    
+    checkboxes.forEach((cb) => {
+      const input = cb as HTMLInputElement;
+      if (input.checked) {
+        conquistasSelecionadas.push(input.value);
+      }
+    });
+    
+    try {
+      await adminJogadorSetarConquistas(token, id, conquistasSelecionadas);
+      fecharModalAjustarConquistas();
+      await refreshDashboard(token);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Erro ao ajustar conquistas");
+    }
+  });
+
+  const btnCancelarConquistas = document.getElementById("btn-modal-conquistas-cancelar")!;
+  btnCancelarConquistas.addEventListener("click", fecharModalAjustarConquistas);
 
   const buscaInput = document.getElementById("admin-busca-jogador") as HTMLInputElement;
   buscaInput.addEventListener("input", () => {

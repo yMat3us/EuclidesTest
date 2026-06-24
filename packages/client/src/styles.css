@@ -1113,8 +1113,11 @@ input:focus {
   z-index: 200;
   background: var(--bg);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  overflow-y: auto;
+  padding: 2rem 0;
 }
 
 .game-container::before {
@@ -2872,7 +2875,7 @@ body {
   border-radius: var(--radius-lg) !important;
   backdrop-filter: blur(20px) !important;
   position: relative;
-  overflow: hidden;
+  overflow: visible !important;
   z-index: 10;
 }
 
@@ -4465,7 +4468,7 @@ html[data-theme="dark"] .theme-icon-moon {
   border: 1px solid rgba(255, 255, 255, 0.05) !important;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 40px rgba(34, 197, 94, 0.08), 0 0 80px rgba(234, 179, 8, 0.04) !important;
   position: relative;
-  overflow: hidden;
+  overflow: visible !important;
   z-index: 10;
 }
 
@@ -4818,4 +4821,310 @@ html[data-theme="dark"] .theme-icon-moon {
   color: var(--text-secondary) !important;
   transform: none !important;
   box-shadow: none !important;
+}
+
+/* Premium Dashboard Status & Progress Styles */
+.user-progress-card {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+}
+
+.progress-bar-track {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.progress-bar-fill {
+  background: linear-gradient(90deg, var(--copa-verde), #00e5ff) !important;
+  box-shadow: 0 0 12px rgba(0, 255, 128, 0.6);
+  border-radius: inherit;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.rodada-widget-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+}
+
+.rodada-widget-box.active {
+  background: rgba(4, 120, 87, 0.15) !important;
+  border: 1px solid var(--copa-verde) !important;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.rodada-widget-box.inactive {
+  background: rgba(30, 41, 59, 0.25) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+.widget-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.widget-dot.active {
+  background-color: var(--copa-verde) !important;
+  box-shadow: 0 0 10px var(--copa-verde);
+  animation: pulse-dot 1.5s infinite;
+}
+
+.widget-dot.inactive {
+  background-color: #64748b !important;
+  box-shadow: none !important;
+}
+
+@keyframes pulse-dot {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.6;
+    box-shadow: 0 0 6px var(--copa-verde);
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+    box-shadow: 0 0 16px var(--copa-verde);
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0.6;
+    box-shadow: 0 0 6px var(--copa-verde);
+  }
+}
+
+/* Premium Achievement Badges */
+.badge-achievement {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  font-size: 0.76rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  cursor: help;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(4px);
+}
+
+.badge-achievement:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 12px currentColor;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.animate-pop {
+  animation: pop-badge 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+@keyframes pop-badge {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Caps lock questions for all minigames */
+.mg-prompt,
+.mg-question,
+.quiz-pergunta,
+.mg-coord-target,
+.copa-scenario-box,
+.logic-eq-row {
+  text-transform: uppercase !important;
+}
+
+/* ─── PWA & Mobile Optimization Overrides ─── */
+@media (max-width: 768px) {
+  /* Prevent sticky topbar taking too much vertical height on mobile */
+  .topbar {
+    position: relative !important;
+    top: 0 !important;
+    margin: 0.5rem 0 1rem !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    border-radius: var(--radius-lg) !important;
+    padding: 0.5rem 0.85rem !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Make brand logo smaller on mobile */
+  .brand-mark {
+    width: 2.2rem !important;
+    height: 2.2rem !important;
+  }
+  .brand-mark svg {
+    width: 1.2rem !important;
+    height: 1.2rem !important;
+  }
+  .brand-name {
+    font-size: 1.05rem !important;
+  }
+  .subtitle {
+    font-size: 0.65rem !important;
+  }
+
+  /* Shift navigation menu to the bottom of the screen (App-like PWA experience) */
+  .main-nav {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 64px !important;
+    border-radius: 0 !important;
+    border: none !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background: rgba(11, 11, 20, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    display: flex !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    z-index: 150 !important;
+    padding: 0 6px !important;
+    margin: 0 !important;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.6) !important;
+  }
+
+  .main-nav .nav-tab {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 0.7rem !important;
+    padding: 6px 4px !important;
+    color: var(--text-secondary) !important;
+    flex: 1 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    gap: 2px !important;
+    border: none !important;
+  }
+
+  .main-nav .nav-tab.active {
+    color: var(--copa-amarelo) !important;
+    font-weight: 700 !important;
+    background: transparent !important;
+    border-bottom: 2px solid var(--copa-amarelo) !important;
+  }
+
+  /* Ensure body content leaves space for bottom navigation bar */
+  #app {
+    padding-bottom: 76px !important;
+  }
+
+  /* Adjust Hero layouts */
+  .hero-layout {
+    grid-template-columns: 1fr !important;
+    padding: 1.5rem 1rem !important;
+  }
+
+  .hero-title {
+    font-size: clamp(2.2rem, 8vw, 2.85rem) !important;
+    letter-spacing: -1px !important;
+  }
+
+  .hero-desc {
+    font-size: 0.95rem !important;
+  }
+
+  .hero-right {
+    margin-top: 1rem !important;
+  }
+
+  /* Podium layout sizing tweaks on mobile */
+  .podium-3d-layout {
+    gap: 0.5rem !important;
+    padding-top: 1rem !important;
+    min-height: 200px !important;
+    margin: 1rem auto 2rem !important;
+  }
+  .podium-name {
+    font-size: 0.82rem !important;
+  }
+  .podium-score {
+    font-size: 0.78rem !important;
+  }
+  .podium-turma {
+    font-size: 0.68rem !important;
+  }
+  .podium-block {
+    margin-right: 5px !important;
+  }
+  .podium-block::after {
+    width: 5px !important;
+    right: -5px !important;
+    top: -2.5px !important;
+  }
+  .podium-block::before {
+    height: 5px !important;
+    top: -5px !important;
+    left: 2.5px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Minigame game container spacing */
+  .game-container {
+    padding: 1rem 0 !important;
+  }
+
+  /* Shell padding and width optimization */
+  .mg-shell,
+  .quiz-shell {
+    padding: 1.25rem 0.85rem !important;
+    width: 96vw !important;
+  }
+
+  /* Alternatives lists */
+  .options-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .options-grid button, .mg-opcoes button, .select-option-btn, .quiz-opcao {
+    padding: 0.85rem 1rem !important;
+    font-size: 0.88rem !important;
+  }
+
+  /* Scoreboard details header sizing */
+  .mg-scoreboard-decor {
+    padding: 6px 8px !important;
+    font-size: 0.72rem !important;
+  }
+
+  /* Avatar selection modal spacing */
+  .avatar-selection-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
+    max-height: 320px !important;
+  }
+  
+  .avatar-option img {
+    width: 80px !important;
+    height: 80px !important;
+  }
+
+  /* Hide custom cursor on mobile touchscreens */
+  .custom-cursor {
+    display: none !important;
+  }
 }

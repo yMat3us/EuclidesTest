@@ -169,8 +169,377 @@ const QUESTIONS = [
     `,
     opcoes: ["34", "46", "32", "38"],
     correta: "34"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🎒 + 🎒 = 18</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🎒 + ✏️ = 13</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🎒 - 📐 = 7</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🎒 + ✏️ × 📐 = ?</div>
+    `,
+    opcoes: ["17", "26", "15", "20"],
+    correta: "17"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🧪 + 🧪 = 10</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🧪 × 🔬 = 20</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🔬 + 🧠 = 10</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🧪 + 🔬 × 🧠 = ?</div>
+    `,
+    opcoes: ["29", "54", "24", "35"],
+    correta: "29"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🦖 + 🦖 = 14</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🦖 + 🐊 = 12</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🦖 - 🐍 = 4</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🦖 × 🐍 - 🐊 = ?</div>
+    `,
+    opcoes: ["16", "25", "12", "18"],
+    correta: "16"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🎸 + 🎸 = 16</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🎸 × 🎺 = 24</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🎺 + 🥁 = 10</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🎸 × 🎺 - 🥁 = ?</div>
+    `,
+    opcoes: ["17", "33", "21", "25"],
+    correta: "17"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍕 + 🍕 = 20</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍕 - 🍟 = 6</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍟 × 🥤 = 12</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🍕 + 🍟 × 🥤 = ?</div>
+    `,
+    opcoes: ["22", "42", "18", "30"],
+    correta: "22"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">✈️ + ✈️ = 12</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">✈️ × 🚁 = 24</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🚁 - ⛵ = 1</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">✈️ × ⛵ - 🚁 = ?</div>
+    `,
+    opcoes: ["14", "15", "12", "20"],
+    correta: "14"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍇 + 🍇 = 16</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍇 - 🍒 = 4</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍒 × 🍍 = 12</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🍇 + 🍒 × 🍍 = ?</div>
+    `,
+    opcoes: ["20", "36", "16", "24"],
+    correta: "20"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">⚡ + ⚡ = 14</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">⚡ + ☔ = 13</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">☔ × ❄️ = 18</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">⚡ + ☔ × ❄️ = ?</div>
+    `,
+    opcoes: ["25", "39", "21", "28"],
+    correta: "25"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;"> donut +  donut = 12</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍩 × 🍪 = 18</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍪 + 🍬 = 8</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🍩 × 🍬 - 🍪 = ?</div>
+    `,
+    opcoes: ["27", "33", "24", "30"],
+    correta: "27"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🐻 + 🐻 = 10</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🐻 + 🐼 = 12</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🐼 × 🐨 = 28</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🐻 × 🐨 + 🐼 = ?</div>
+    `,
+    opcoes: ["27", "48", "25", "32"],
+    correta: "27"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🔑 + 🔑 = 18</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🔑 - 🔒 = 4</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🔒 + 🚪 = 13</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🔑 × 🔒 - 🚪 = ?</div>
+    `,
+    opcoes: ["37", "42", "32", "45"],
+    correta: "37"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">📐 + 📐 = 8</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">📐 × ✏️ = 24</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">✏️ - ✒️ = 4</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">📐 + ✏️ × ✒️ = ?</div>
+    `,
+    opcoes: ["16", "20", "12", "14"],
+    correta: "16"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🦁 + 🦁 = 12</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🦁 × 🐯 = 30</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🐯 + 🦊 = 9</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🦁 × 🦊 - 🐯 = ?</div>
+    `,
+    opcoes: ["19", "25", "15", "21"],
+    correta: "19"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍉 + 🍉 = 14</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍉 + 🍓 = 12</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍓 × 🍒 = 15</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🍉 × 🍓 - 🍒 = ?</div>
+    `,
+    opcoes: ["32", "56", "30", "35"],
+    correta: "32"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🚀 + 🚀 = 16</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🚀 + 🛰️ = 14</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🛰️ × 🛸 = 24</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🚀 × 🛸 - 🛰️ = ?</div>
+    `,
+    opcoes: ["26", "48", "24", "30"],
+    correta: "26"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🎈 + 🎈 = 10</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🎈 × 🎁 = 15</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🎁 + 🧸 = 11</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🎈 + 🎁 × 🧸 = ?</div>
+    `,
+    opcoes: ["29", "64", "24", "32"],
+    correta: "29"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🐶 + 🐶 = 12</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🐶 × 🐱 = 24</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🐱 - 🐭 = 2</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🐶 × 🐭 + 🐱 = ?</div>
+    `,
+    opcoes: ["16", "20", "12", "14"],
+    correta: "16"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🥇 + 🥇 = 10</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🥇 × 🥈 = 20</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🥈 + 🥉 = 7</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🥇 × 🥉 - 🥈 = ?</div>
+    `,
+    opcoes: ["11", "15", "12", "9"],
+    correta: "11"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">⭐ + ⭐ = 12</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">⭐ × 🌙 = 18</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🌙 + ☀️ = 12</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">⭐ × 🌙 + ☀️ = ?</div>
+    `,
+    opcoes: ["27", "45", "24", "30"],
+    correta: "27"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍔 + 🍔 = 16</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍔 + 🍟 = 12</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍟 × 🥤 = 8</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🍔 × 🥤 - 🍟 = ?</div>
+    `,
+    opcoes: ["12", "20", "10", "14"],
+    correta: "12"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🚗 + 🚗 = 14</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🚗 × 🏍️ = 21</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🏍️ + 🚲 = 8</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🚗 × 🚲 + 🏍️ = ?</div>
+    `,
+    opcoes: ["38", "49", "35", "42"],
+    correta: "38"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🎸 + 🎸 = 12</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🎸 × 🎻 = 30</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🎻 - 🎺 = 3</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🎸 × 🎺 + 🎻 = ?</div>
+    `,
+    opcoes: ["17", "22", "15", "19"],
+    correta: "17"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍎 + 🍎 = 10</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍎 × 🍌 = 25</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍌 - 🍒 = 3</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🍎 + 🍌 × 🍒 = ?</div>
+    `,
+    opcoes: ["15", "20", "10", "12"],
+    correta: "15"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">☀️ + ☀️ = 20</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">☀️ - ☁️ = 4</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">☁️ × ⚡ = 18</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">☀️ + ☁️ × ⚡ = ?</div>
+    `,
+    opcoes: ["28", "48", "24", "30"],
+    correta: "28"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🦕 + 🦕 = 12</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🦕 × 🦖 = 24</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🦖 + 🐢 = 9</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🦕 × 🐢 - 🦖 = ?</div>
+    `,
+    opcoes: ["26", "34", "20", "24"],
+    correta: "26"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🧪 + 🧪 = 16</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🧪 - 🔬 = 5</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🔬 × 🧬 = 12</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🧪 + 🔬 × 🧬 = ?</div>
+    `,
+    opcoes: ["20", "44", "15", "24"],
+    correta: "20"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍉 + 🍉 = 8</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍉 × 🍇 = 24</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍇 + 🍒 = 11</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🍉 × 🍒 - 🍇 = ?</div>
+    `,
+    opcoes: ["14", "18", "12", "16"],
+    correta: "14"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍩 + 🍩 = 14</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍩 × 🍪 = 21</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍪 + 🍬 = 9</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🍩 × 🍬 - 🍪 = ?</div>
+    `,
+    opcoes: ["39", "45", "36", "42"],
+    correta: "39"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🔑 + 🔑 = 10</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🔑 × 🔒 = 30</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🔒 + 🚪 = 14</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🔑 × 🚪 - 🔒 = ?</div>
+    `,
+    opcoes: ["34", "44", "30", "38"],
+    correta: "34"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">💎 + 💎 = 12</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">💎 × 👑 = 24</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">👑 - 🕶️ = 1</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">💎 × 🕶️ + 👑 = ?</div>
+    `,
+    opcoes: ["22", "30", "18", "20"],
+    correta: "22"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🎒 + 🎒 = 14</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🎒 + ✏️ = 11</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🎒 - 📐 = 5</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🎒 × ✏️ - 📐 = ?</div>
+    `,
+    opcoes: ["26", "33", "24", "28"],
+    correta: "26"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🦖 + 🦖 = 16</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🦖 - 🐊 = 3</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🐊 × 🐍 = 15</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🦖 + 🐊 × 🐍 = ?</div>
+    `,
+    opcoes: ["23", "39", "18", "25"],
+    correta: "23"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🎈 + 🎈 = 12</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🎈 × 🎁 = 24</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🎁 + 🧸 = 11</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🎈 + 🎁 × 🧸 = ?</div>
+    `,
+    opcoes: ["34", "70", "28", "40"],
+    correta: "34"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">☀️ + ☀️ = 12</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">☀️ × ☁️ = 24</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">☁️ - ❄️ = 1</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">☀️ × ❄️ + ☁️ = ?</div>
+    `,
+    opcoes: ["22", "30", "18", "20"],
+    correta: "22"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍔 + 🍔 = 10</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍔 × 🍟 = 20</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🍟 + 🥤 = 7</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🍔 × 🥤 - 🍟 = ?</div>
+    `,
+    opcoes: ["11", "15", "12", "9"],
+    correta: "11"
+  },
+  {
+    equations: `
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🚗 + 🚗 = 16</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🚗 × 🚲 = 24</div>
+      <div class="logic-eq-row" style="margin-bottom: 8px; font-size: 1.4rem;">🚲 + 🛴 = 7</div>
+      <div class="logic-eq-row" style="font-weight: bold; color: var(--gold); font-size: 1.6rem; margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 12px;">🚗 + 🚲 × 🛴 = ?</div>
+    `,
+    opcoes: ["20", "44", "16", "24"],
+    correta: "20"
   }
 ];
+
+function embaralhar<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j]!, a[i]!];
+  }
+  return a;
+}
 
 export function iniciarLogica(
   jogador: Jogador,
@@ -185,6 +554,8 @@ export function iniciarLogica(
   let pararTimer = () => {};
   let indice = 0;
   let acertos = 0;
+  // Shuffle questions at startup
+  const jogoQuestoes = embaralhar(QUESTIONS);
 
   const ui = montarShell(
     container,
@@ -193,8 +564,7 @@ export function iniciarLogica(
      <p class="mg-prompt" style="font-size:1.15rem; font-weight:600; margin-bottom:15px; text-align:center;">Resolva a última linha respeitando as regras matemáticas:</p>
      <div class="options-grid" id="lg-options"></div>
      <div class="feedback-area hidden" id="lg-feedback" style="margin-top:15px;">
-       <p id="lg-feedback-text"></p>
-       <button type="button" id="btn-lg-next" class="btn primary btn-sm">Próxima</button>
+       <p id="lg-feedback-text" style="margin: 0; text-align: center; font-size: 1.1rem;"></p>
      </div>`,
   );
 
@@ -202,29 +572,30 @@ export function iniciarLogica(
   const elOptions = document.getElementById("lg-options")!;
   const elFeedback = document.getElementById("lg-feedback")!;
   const elFeedbackText = document.getElementById("lg-feedback-text")!;
-  const btnNext = document.getElementById("btn-lg-next")!;
 
   function obterPontosAtuais() {
-    return Math.round((acertos / QUESTIONS.length) * META.pontuacaoMaxima);
+    return Math.round((acertos / jogoQuestoes.length) * META.pontuacaoMaxima);
   }
 
   function atualizarScore() {
-    ui.setScore(`Questões: ${indice}/${QUESTIONS.length} · ${obterPontosAtuais()} pts`);
+    ui.setScore(`Questões: ${indice}/${jogoQuestoes.length} · ${obterPontosAtuais()} pts`);
   }
 
   function renderQuestao() {
-    if (indice >= QUESTIONS.length) {
+    if (indice >= jogoQuestoes.length) {
       void encerrar("Todas as questões respondidas!");
       return;
     }
 
-    const q = QUESTIONS[indice];
+    const q = jogoQuestoes[indice]!;
     elEqs.innerHTML = q.equations;
     elOptions.innerHTML = "";
     elFeedback.classList.add("hidden");
     atualizarScore();
+    ui.resetSpeedBar?.();
 
-    q.opcoes.forEach((opt) => {
+    const opcoesEmbaralhadas = embaralhar(q.opcoes);
+    opcoesEmbaralhadas.forEach((opt) => {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "btn ghost select-option-btn";
@@ -237,7 +608,8 @@ export function iniciarLogica(
   }
 
   function verificarResposta(selected: string) {
-    const q = QUESTIONS[indice];
+    if (finalizado) return;
+    const q = jogoQuestoes[indice]!;
     const optsButtons = elOptions.querySelectorAll("button");
 
     optsButtons.forEach((btn) => {
@@ -260,11 +632,12 @@ export function iniciarLogica(
     indice++;
     atualizarScore();
     elFeedback.classList.remove("hidden");
-  }
 
-  btnNext.addEventListener("click", () => {
-    renderQuestao();
-  });
+    // Auto-proceed after 1300ms
+    setTimeout(() => {
+      renderQuestao();
+    }, 1300);
+  }
 
   async function encerrar(motivo: string) {
     if (finalizado) return;

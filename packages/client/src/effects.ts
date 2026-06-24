@@ -430,20 +430,22 @@ export function initFeedbackWatcher() {
     mutations.forEach((mutation) => {
       if (mutation.type === "attributes" && mutation.attributeName === "class") {
         const target = mutation.target as HTMLElement;
-        const className = target.className;
+        const className = typeof target.className === "string"
+          ? target.className
+          : (target.getAttribute("class") || "");
 
         if (className.includes("ok") || className.includes("success") || className.includes("correta")) {
           // Prevent multiple double plays
-          const lastPlay = target.dataset.lastPlaySuccess || "0";
+          const lastPlay = target.getAttribute("data-last-play-success") || "0";
           if (Date.now() - parseInt(lastPlay) > 400) {
-            target.dataset.lastPlaySuccess = Date.now().toString();
+            target.setAttribute("data-last-play-success", Date.now().toString());
             playSuccess();
             triggerConfetti();
           }
         } else if (className.includes("erro") || className.includes("incorrect")) {
-          const lastPlay = target.dataset.lastPlayError || "0";
+          const lastPlay = target.getAttribute("data-last-play-error") || "0";
           if (Date.now() - parseInt(lastPlay) > 400) {
-            target.dataset.lastPlayError = Date.now().toString();
+            target.setAttribute("data-last-play-error", Date.now().toString());
             playError();
           }
         }

@@ -104,6 +104,7 @@ export function rankingRodada(limite: number, rodadaId?: string) {
       j.id,
       j.apelido,
       j.turma,
+      j.avatar,
       COALESCE(SUM(pr.pontos), 0) AS total,
       COUNT(pr.id) AS minigames_jogados,
       MAX(pr.atualizado_em) AS ultima_partida

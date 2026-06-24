@@ -8,6 +8,10 @@
       content="Euclides Test — Arena de minigames matemáticos com ranking global. ETE Pastor Isaac, Abreu e Lima — PE."
     />
     <title>Euclides Test — Arena Matemática</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#030306" />
+    <link rel="icon" type="image/png" href="/Logo.png" />
+    <link rel="apple-touch-icon" href="/Logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -200,6 +204,13 @@
                   <div style="font-size: 2rem; margin-bottom: 8px;">⚽</div>
                   <h4>Matemática na Copa</h4>
                   <p>Problemas de futebol sobre médias de gols, capacidade de estádios e geometria de campo.</p>
+                </div>
+              </div>
+              <div class="gallery-item glass-card" style="border-top: 3px solid var(--copa-amarelo);">
+                <div class="gallery-desc">
+                  <div style="font-size: 2rem; margin-bottom: 8px;">📊</div>
+                  <h4>Fórmulas Matemáticas</h4>
+                  <p>Identifique a qual assunto pertence uma determinada fórmula matemática exibida.</p>
                 </div>
               </div>
             </div>
@@ -448,10 +459,20 @@
             <!-- Left: Player Stats Profile Box -->
             <div class="glass-card user-profile-card">
               <div class="user-profile-details">
-                <span class="user-avatar-decor" id="dash-avatar">⚽</span>
-                <div>
+                <div class="user-avatar-wrapper" id="btn-change-avatar" style="cursor: pointer; position: relative; width: 60px; height: 60px; min-width: 60px; min-height: 60px;" title="Clique para mudar de avatar">
+                  <img id="dash-avatar-img" src="/avatar_einstein.jpg" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--copa-verde);" />
+                  <div style="position: absolute; bottom: -2px; right: -2px; background: var(--copa-verde); border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: #000; box-shadow: 0 2px 8px rgba(0,0,0,0.5);">✏️</div>
+                </div>
+                <div style="flex: 1;">
                   <h3 id="dash-username">Jogador</h3>
                   <span id="dash-class" class="pill">Carregando...</span>
+                  <div class="user-level-xp-wrap" style="margin-top: 8px;">
+                    <span id="dash-level" class="pill" style="background: var(--copa-amarelo); color: #000; font-weight: bold; font-size: 0.72rem; padding: 2px 6px;">Nível 1</span>
+                    <span id="dash-xp" class="muted text-xs" style="margin-left: 4px;">0 / 459 XP</span>
+                    <div class="xp-bar-track" style="background: rgba(255,255,255,0.1); border-radius: 4px; height: 5px; width: 100%; margin-top: 4px; overflow: hidden;">
+                      <div id="dash-xp-bar" style="background: var(--copa-amarelo); height: 100%; width: 0%; transition: width 0.3s ease;"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
               
@@ -476,10 +497,9 @@
               </div>
             </div>
 
-            <!-- Right: Progress & Status (Hidden to preserve JS state variables without throwing errors) -->
-            <div class="glass-card user-progress-card hidden" style="display: none !important;">
+            <!-- Right: Progress & Status -->
+            <div class="glass-card user-progress-card" style="display: flex; flex-direction: column; gap: 16px;">
               <h3 class="dash-section-title">Progresso da Competição</h3>
-              <p class="muted text-sm" style="margin-bottom: 12px;">Complete os desafios ativos para maximizar sua pontuação.</p>
               
               <!-- Progress Bar -->
               <div class="progress-bar-wrapper">
@@ -498,6 +518,14 @@
                 <div>
                   <strong id="widget-title">Aguardando Apresentação</strong>
                   <span class="muted text-xs" id="widget-desc">O professor liberará as partidas em instantes.</span>
+                </div>
+              </div>
+
+              <!-- Achievements Section -->
+              <div style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 16px;">
+                <h4 style="font-size: 1rem; font-weight: 600; margin-bottom: 8px; color: var(--copa-amarelo);">🏆 Suas Conquistas</h4>
+                <div id="dash-conquistas-list" style="display: flex; flex-wrap: wrap; gap: 8px; padding-bottom: 8px; min-height: 48px;">
+                  <span class="muted text-xs">Nenhuma conquista desbloqueada.</span>
                 </div>
               </div>
             </div>
@@ -667,6 +695,36 @@
       </div>
       <p class="credits-footer muted">Obrigado!</p>
     </dialog>
+
+    <!-- MODAL SELECIONAR AVATAR -->
+    <div id="modal-selecionar-avatar" class="modal hidden" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 10000;">
+      <div class="modal-content glass-card" style="max-width: 500px; width: 90%; padding: 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: #0b0b14;">
+        <h3 style="margin-bottom: 8px; color: #fff;">Escolha seu Avatar</h3>
+        <p class="muted text-sm" style="margin-bottom: 20px;">Selecione um dos avatares para personalizar seu perfil.</p>
+        <div class="avatar-selection-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; max-height: 250px; overflow-y: auto;">
+          <!-- Custom AI Avatars -->
+          <div class="avatar-option" data-avatar="/avatar_einstein.jpg" style="cursor: pointer; text-align: center;">
+            <img src="/avatar_einstein.jpg" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid transparent; transition: border-color 0.2s;" />
+            <span style="font-size: 0.75rem; display: block; margin-top: 4px; color: #a1a1aa;">Einstein</span>
+          </div>
+          <div class="avatar-option" data-avatar="/avatar_cyber.jpg" style="cursor: pointer; text-align: center;">
+            <img src="/avatar_cyber.jpg" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid transparent; transition: border-color 0.2s;" />
+            <span style="font-size: 0.75rem; display: block; margin-top: 4px; color: #a1a1aa;">Cyber</span>
+          </div>
+          <div class="avatar-option" data-avatar="/avatar_astro.jpg" style="cursor: pointer; text-align: center;">
+            <img src="/avatar_astro.jpg" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid transparent; transition: border-color 0.2s;" />
+            <span style="font-size: 0.75rem; display: block; margin-top: 4px; color: #a1a1aa;">Astro</span>
+          </div>
+          <div class="avatar-option" data-avatar="/avatar_pixel.jpg" style="cursor: pointer; text-align: center;">
+            <img src="/avatar_pixel.jpg" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid transparent; transition: border-color 0.2s;" />
+            <span style="font-size: 0.75rem; display: block; margin-top: 4px; color: #a1a1aa;">Pixel</span>
+          </div>
+        </div>
+        <div class="modal-actions" style="display: flex; gap: 8px; justify-content: flex-end;">
+          <button type="button" id="btn-cancelar-avatar" class="btn ghost">Cancelar</button>
+        </div>
+      </div>
+    </div>
 
     <script type="module" src="/src/main.ts"></script>
   </body>

@@ -38,6 +38,10 @@ import {
   removerPartidaAtiva,
   rankingTurmas,
   encerrarSessoesAbertas,
+  adicionarXpJogador,
+  atualizarXpJogador,
+  atualizarConquistasJogador,
+  atualizarAvatarJogador,
 } from "./repository.js";
 import {
   encerrarRodadaAtiva,
@@ -74,6 +78,13 @@ export function emitirEventoRealtime(tipo: string, dados: any = {}) {
   }
 }
 
+/**
+ * Registra todas as rotas da API REST da aplicação no servidor Fastify.
+ * Inclui endpoints públicos para registro de jogadores, inicialização de partidas,
+ * envio de pontuações, streaming em tempo real via SSE (Server-Sent Events) de rankings,
+ * e painel administrativo protegido para o professor gerenciar turmas e rodadas.
+ * @param app Instância do servidor Fastify.
+ */
 export async function registerRoutes(app: FastifyInstance) {
   app.addContentTypeParser('application/x-www-form-urlencoded', { parseAs: 'string' }, function (req, body, done) {
     try {
@@ -200,6 +211,9 @@ export async function registerRoutes(app: FastifyInstance) {
           turma: criado.turma ?? null,
           ativo: 1,
           banido: 0,
+          xp: 0,
+          conquistas: "[]",
+          avatar: null,
         };
       } catch {
         return reply.status(409).send({ erro: "Não foi possível criar jogador" });
@@ -219,6 +233,9 @@ export async function registerRoutes(app: FastifyInstance) {
         apelido: jogador.apelido,
         turma: jogador.turma ?? undefined,
         souProfessor: false,
+        xp: jogador.xp,
+        conquistas: JSON.parse(jogador.conquistas || "[]"),
+        avatar: jogador.avatar,
       },
       sessaoId,
       rodadaAtiva: rodada,
@@ -249,7 +266,10 @@ export async function registerRoutes(app: FastifyInstance) {
     const rodada = getRodadaAtiva();
 
     return {
-      jogador: row,
+      jogador: {
+        ...row,
+        conquistas: JSON.parse(row.conquistas || "[]"),
+      },
       pontuacoes,
       total: totalGlobal,
       totalGlobal,
@@ -257,6 +277,18 @@ export async function registerRoutes(app: FastifyInstance) {
       rodadaAtiva: rodada,
     };
   });
+
+  app.post<{ Params: { id: string }; Body: { avatar: string | null } }>(
+    "/api/jogadores/:id/avatar",
+    async (req, reply) => {
+      const jogador = buscarJogadorPorId(req.params.id);
+      if (!jogador) {
+        return reply.status(404).send({ erro: "Jogador não encontrado" });
+      }
+      atualizarAvatarJogador(jogador.id, req.body.avatar);
+      return { ok: true, avatar: req.body.avatar };
+    }
+  );
 
   app.post<{ Body: { jogadorId: string; minigameId: string } }>(
     "/api/partidas/iniciar",
@@ -400,6 +432,11 @@ export async function registerRoutes(app: FastifyInstance) {
       contabilizadoRodada = true;
     }
 
+    const temBonus = Math.random() < 0.25;
+    const xpBase = validacao.pontos;
+    const xpGanha = temBonus ? xpBase * 2 : xpBase;
+    const xpResult = adicionarXpJogador(parsed.data.jogadorId, xpGanha);
+
     atualizarAcessoJogador(parsed.data.jogadorId);
 
     emitirEventoRealtime("ranking_atualizado");
@@ -411,6 +448,11 @@ export async function registerRoutes(app: FastifyInstance) {
       totalRodada: totalRodadaJogador(parsed.data.jogadorId),
       contabilizadoRodada,
       rodadaAtiva: rodada,
+      xpGanha,
+      temBonus,
+      novoXp: xpResult.novoXp,
+      novoNivel: xpResult.novoNivel,
+      conquistasDesbloqueadas: xpResult.conquistasDesbloqueadas,
     };
   });
 
@@ -493,6 +535,9 @@ export async function registerRoutes(app: FastifyInstance) {
         j.turma,
         j.ativo,
         j.banido,
+        j.xp,
+        j.conquistas,
+        j.avatar,
         COALESCE((SELECT SUM(pontos) FROM pontuacoes WHERE jogador_id = j.id), 0) AS total_global,
         COALESCE((SELECT SUM(pontos) FROM pontuacoes_rodada WHERE jogador_id = j.id AND rodada_id = ?), 0) AS total_rodada
       FROM jogadores j
@@ -641,6 +686,39 @@ export async function registerRoutes(app: FastifyInstance) {
       emitirEventoRealtime("rodada_atualizada");
       
       return { ok: true, novoValorGlobal: newGlobal, novoValorRodada: newRodada };
+    }
+  );
+
+  app.post<{ Params: { id: string }; Body: { xp: number } }>(
+    "/api/admin/jogadores/:id/xp",
+    async (req, reply) => {
+      if (!isAdminRequest(req)) {
+        return reply.status(401).send({ erro: "Senha de professor incorreta" });
+      }
+      const { xp } = req.body;
+      if (typeof xp !== "number" || xp < 0) {
+        return reply.status(400).send({ erro: "XP deve ser um número positivo" });
+      }
+      atualizarXpJogador(req.params.id, xp);
+      const jogador = buscarJogadorPorId(req.params.id)!;
+      emitirEventoRealtime("ranking_atualizado");
+      return { ok: true, xp, conquistas: JSON.parse(jogador.conquistas || "[]") };
+    }
+  );
+
+  app.post<{ Params: { id: string }; Body: { conquistas: string[] } }>(
+    "/api/admin/jogadores/:id/conquistas",
+    async (req, reply) => {
+      if (!isAdminRequest(req)) {
+        return reply.status(401).send({ erro: "Senha de professor incorreta" });
+      }
+      const { conquistas } = req.body;
+      if (!Array.isArray(conquistas)) {
+        return reply.status(400).send({ erro: "Conquistas deve ser um array de strings" });
+      }
+      atualizarConquistasJogador(req.params.id, conquistas);
+      emitirEventoRealtime("ranking_atualizado");
+      return { ok: true, conquistas };
     }
   );
 
@@ -1051,6 +1129,9 @@ export async function registerRoutes(app: FastifyInstance) {
             turma: criado.turma ?? null,
             ativo: 1,
             banido: 0,
+            xp: 0,
+            conquistas: "[]",
+            avatar: null,
           };
         } catch {
           throw new Error("Não foi possível criar o jogador professor");
@@ -1778,6 +1859,22 @@ Para baixar o backup em JSON completo, acesse a área administrativa do site no 
       }
     }
   }
+
+  app.get<{ Querystring: { "hub.mode"?: string; "hub.verify_token"?: string; "hub.challenge"?: string } }>(
+    "/api/whatsapp/webhook",
+    async (req, reply) => {
+      const mode = req.query["hub.mode"];
+      const token = req.query["hub.verify_token"];
+      const challenge = req.query["hub.challenge"];
+
+      const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN;
+
+      if (mode === "subscribe" && token === verifyToken) {
+        return reply.status(200).send(challenge);
+      }
+      return reply.status(403).send({ erro: "Token de verificação inválido" });
+    }
+  );
 
   app.post("/api/whatsapp/webhook", async (req, reply) => {
     let from = "";

@@ -11,6 +11,9 @@ export function runMigrations(db: DatabaseSync) {
       turma TEXT,
       ativo INTEGER NOT NULL DEFAULT 1,
       banido INTEGER NOT NULL DEFAULT 0,
+      xp INTEGER NOT NULL DEFAULT 0,
+      conquistas TEXT NOT NULL DEFAULT '[]',
+      avatar TEXT,
       criado_em TEXT NOT NULL DEFAULT (datetime('now')),
       ultimo_acesso TEXT NOT NULL DEFAULT (datetime('now'))
     );
@@ -111,6 +114,19 @@ export function runMigrations(db: DatabaseSync) {
 
     CREATE INDEX IF NOT EXISTS idx_partidas_ativas ON partidas_ativas(id);
   `);
+
+  const cols = db.prepare(`PRAGMA table_info(jogadores)`).all() as {
+    name: string;
+  }[];
+  if (!cols.some((c) => c.name === "xp")) {
+    db.exec(`ALTER TABLE jogadores ADD COLUMN xp INTEGER NOT NULL DEFAULT 0`);
+  }
+  if (!cols.some((c) => c.name === "conquistas")) {
+    db.exec(`ALTER TABLE jogadores ADD COLUMN conquistas TEXT NOT NULL DEFAULT '[]'`);
+  }
+  if (!cols.some((c) => c.name === "avatar")) {
+    db.exec(`ALTER TABLE jogadores ADD COLUMN avatar TEXT`);
+  }
 
   db.prepare(
     `INSERT OR IGNORE INTO configuracoes (chave, valor) VALUES ('restricao_cadastro_ativa', '0')`,

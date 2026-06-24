@@ -1,0 +1,24 @@
+{
+  "name": "Euclides Test — Arena Matemática",
+  "short_name": "Euclides Test",
+  "description": "Arena de minigames matemáticos com ranking global.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#030306",
+  "theme_color": "#030306",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/Logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/Logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

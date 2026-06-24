@@ -3,7 +3,10 @@ import type { MinigameMeta } from "@ddm/shared";
 export interface Jogador {
   id: string;
   apelido: string;
-  turma?: string;
+  turma?: string | null;
+  xp?: number;
+  conquistas?: string[];
+  avatar?: string | null;
 }
 
 export interface RankingEntry {
@@ -23,6 +26,12 @@ export interface RodadaInfo {
 
 const BASE = "/api";
 
+/**
+ * Registra um novo jogador ou professor na arena.
+ * @param apelido Apelido único escolhido pelo usuário.
+ * @param opts Opções adicionais como turma e flag de professor.
+ * @returns Retorna os dados do jogador e informações da sessão.
+ */
 export async function registrarJogador(
   apelido: string,
   opts: { turma?: string; souProfessor?: boolean },
@@ -48,6 +57,10 @@ export async function registrarJogador(
   return data;
 }
 
+/**
+ * Obtém a lista de minigames ativos ou cadastrados na arena.
+ * @param all Se verdadeiro, retorna todos os minigames, incluindo os não implementados.
+ */
 export async function listarMinigames(all = false): Promise<{
   minigames: MinigameMeta[];
   pontuacaoTotalPossivel: number;
@@ -56,11 +69,17 @@ export async function listarMinigames(all = false): Promise<{
   return res.json();
 }
 
+/**
+ * Consulta se há alguma rodada/apresentação de professor ativa no momento.
+ */
 export async function buscarRodadaAtual() {
   const res = await fetch(`${BASE}/rodada/atual?_=${Date.now()}`);
   return res.json() as Promise<{ ativa: boolean; rodada: RodadaInfo | null }>;
 }
 
+/**
+ * Obtém as configurações gerais do servidor (lista de turmas ativas e controle de cadastro).
+ */
 export async function buscarConfig() {
   const res = await fetch(`${BASE}/config?_=${Date.now()}`);
   return res.json() as Promise<{
@@ -69,6 +88,11 @@ export async function buscarConfig() {
   }>;
 }
 
+/**
+ * Inicia uma partida de um minigame para obter ID de partida e token de segurança.
+ * @param jogadorId ID do jogador.
+ * @param minigameId ID único do minigame.
+ */
 export async function iniciarPartida(
   jogadorId: string,
   minigameId: string,
@@ -83,6 +107,10 @@ export async function iniciarPartida(
   return data;
 }
 
+/**
+ * Envia e registra a pontuação de um jogador ao fim de uma partida.
+ * @param payload Parâmetros da pontuação, tokens e metadados.
+ */
 export async function enviarPontuacao(payload: {
   jogadorId: string;
   minigameId: string;
@@ -395,4 +423,37 @@ export async function adminZerarContadores(token: string) {
   const data = await res.json();
   if (!res.ok) throw new Error(data.erro ?? "Falha ao resetar contadores");
   return data as { ok: boolean; mensagem: string };
+}
+
+export async function salvarAvatarJogador(id: string, avatar: string | null) {
+  const res = await fetch(`${BASE}/jogadores/${id}/avatar`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ avatar }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.erro ?? "Falha ao atualizar avatar");
+  return data;
+}
+
+export async function adminJogadorSetarXp(token: string, id: string, xp: number) {
+  const res = await fetch(`${BASE}/admin/jogadores/${id}/xp`, {
+    method: "POST",
+    headers: { ...adminHeaders(token), "Content-Type": "application/json" },
+    body: JSON.stringify({ xp }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.erro ?? "Falha ao atualizar XP");
+  return data;
+}
+
+export async function adminJogadorSetarConquistas(token: string, id: string, conquistas: string[]) {
+  const res = await fetch(`${BASE}/admin/jogadores/${id}/conquistas`, {
+    method: "POST",
+    headers: { ...adminHeaders(token), "Content-Type": "application/json" },
+    body: JSON.stringify({ conquistas }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.erro ?? "Falha ao atualizar conquistas");
+  return data;
 }

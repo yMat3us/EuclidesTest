@@ -1,6 +1,5 @@
 import cors from "@fastify/cors";
 import fastifyStatic from "@fastify/static";
-import formbody from "@fastify/formbody";
 import Fastify from "fastify";
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -16,7 +15,6 @@ const app = Fastify({ logger: true });
 await app.register(cors, {
   origin: true,
 });
-await app.register(formbody);
 
 // Limitador de taxa em memória (Rate Limiter)
 const IPS_LIMITE = new Map<string, { count: number; resetAt: number }>();

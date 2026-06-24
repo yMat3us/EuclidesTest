@@ -36,6 +36,20 @@ param whatsappProvider string = ''
 @description('The WhatsApp provider API URL (optional).')
 param whatsappApiUrl string = ''
 
+@description('The Gemini model to use.')
+param geminiModel string = 'gemini-2.5-flash'
+
+@description('The Twilio Account SID (required if provider is twilio).')
+@secure()
+param twilioAccountSid string = ''
+
+@description('The Twilio Auth Token (required if provider is twilio).')
+@secure()
+param twilioAuthToken string = ''
+
+@description('The Twilio Phone Number (required if provider is twilio).')
+param twilioPhoneNumber string = ''
+
 // Define the App Service Plan (Linux)
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   name: '${appName}-plan'
@@ -106,6 +120,22 @@ resource webApp 'Microsoft.Web/sites@2022-09-01' = {
         {
           name: 'WHATSAPP_API_URL'
           value: whatsappApiUrl
+        }
+        {
+          name: 'GEMINI_MODEL'
+          value: geminiModel
+        }
+        {
+          name: 'TWILIO_ACCOUNT_SID'
+          value: twilioAccountSid
+        }
+        {
+          name: 'TWILIO_AUTH_TOKEN'
+          value: twilioAuthToken
+        }
+        {
+          name: 'TWILIO_PHONE_NUMBER'
+          value: twilioPhoneNumber
         }
         {
           name: 'DDM_DATA_DIR'

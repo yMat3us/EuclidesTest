@@ -103,3 +103,33 @@ Botão **Sair** ao lado do apelido (encerra sessão e remove login deste navegad
 ## Próximo passo sugerido
 
 Implementar o minigame **Frações** ou configurar o servidor na rede local da escola — diga qual prefere.
+
+## Deploy no Azure
+
+O projeto está totalmente preparado para hospedagem no **Azure App Service** (Linux Node.js 22 LTS).
+
+### 1. Provisionar Infraestrutura (Azure CLI + Bicep)
+Navegue até a pasta `infra` e execute o script interativo para criar o Resource Group, o App Service Plan (tier gratuito F1 por padrão) e o Web App:
+
+```bash
+cd infra
+chmod +x deploy.sh
+./deploy.sh
+```
+
+O script solicitará as variáveis de configuração de ambiente e as definirá de forma segura no painel do Azure (App Settings):
+* `DDM_ADMIN_TOKEN`: A senha de acesso ao painel do professor.
+* `GEMINI_API_KEY`: Sua chave de API do Google AI Studio.
+* `GEMINI_MODEL`: O modelo do Gemini (ex: `gemini-3.5-flash`).
+* `MONGODB_URI`: String de conexão do MongoDB para backups automáticos e sincronização em tempo real do SQLite local.
+* `WHATSAPP_PROVIDER`: `twilio`, `evolution` ou `zapi`.
+* `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_PHONE_NUMBER`: Suas credenciais do Twilio caso utilize este provedor.
+
+### 2. Configurar CI/CD (GitHub Actions)
+Depois de provisionar o Web App no Azure:
+1. Abra o arquivo [.github/workflows/azure-deploy.yml](file:///home/mateus/Projetos/EuclidesTest/.github/workflows/azure-deploy.yml) e altere a variável `AZURE_WEBAPP_NAME` com o nome do seu Web App criado.
+2. Vá no Portal do Azure, abra a página do seu Web App e clique em **Get publish profile** (Baixar perfil de publicação).
+3. No seu repositório do GitHub, vá em **Settings > Secrets and variables > Actions** e adicione um novo Secret:
+   * **Nome**: `AZURE_WEBAPP_PUBLISH_PROFILE`
+   * **Conteúdo**: Cole todo o texto XML do perfil de publicação baixado.
+4. Todo push feito na branch `main` disparará o pipeline automaticamente, compilando o monorepo TypeScript, gerando os arquivos estáticos do Phaser (`/packages/client/dist`) e atualizando o servidor no Azure.
